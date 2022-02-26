@@ -2,7 +2,7 @@ import params from './params.mjs'
 
 class Simulation {
 
-    constructor (seed, maxSteps, probNewCustomer, ) {
+    constructor(seed, maxSteps, probNewCustomer) {
         // Apparently javascript random does not accept a seed
         // So for this we need to find something or implement it ourselves
         this.seed = seed;
