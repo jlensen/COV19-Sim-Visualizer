@@ -1,4 +1,4 @@
-import params from './params.mjs'
+import params from './util.mjs'
 
 const DIRECTIONS = [[-1, 0], [0, 1], [1, 0], [0, -1]];
 
@@ -34,8 +34,8 @@ class Customer {
 
         for (let i = 0; i < this.shoppingList.length; i++) {
             let targetInd = store.getIndexFromCoord(this.shoppingList[i]);
-            let thisDist;
-            // TODO find out how to find paths i nthe store, original uses a graph with dijkstra
+            let thisDist = this.store.graph.shortestPath(startInd, targetInd);
+            // TODO find out how to find paths in the store, original uses a graph with dijkstra
             // probably need to change the way we handle the store for our version
             //let thisDist = ...;
             if (thisDist < shortestDist) {
@@ -65,7 +65,6 @@ class Customer {
     }
 
     spreadViralPlumes(store) {
-        // TODO check this random
         let sample = Math.random();
         if (sample < this.probSpreadPlume && !store.useDiffusion) {
             store.plumes[this.x, this.y] = params.PLUMELIFETIME;
@@ -116,3 +115,5 @@ class SmartCustomer extends Customer {
         
     }
 }
+
+export default SmartCustomer;

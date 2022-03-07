@@ -30,4 +30,7 @@ let params = {
     WEIRDQUEUELIMIT : 39,
 }
 
-export default params;
+export {params};
+export function randRange(low, high) {
+    return Math.random() * (high - low) + low
+};

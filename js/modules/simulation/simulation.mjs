@@ -1,4 +1,5 @@
-import params from './params.mjs'
+import params from './util.mjs'
+import { SmartCustomer } from './customer.mjs';
 
 class Simulation {
 
@@ -25,6 +26,8 @@ class Simulation {
 		this.customersNowInQueue = new Array(this.maxSteps).fill(0);
 		this.exposureDuringTimeStep = new Array(this.maxSteps).fill(0);
 
+        this.randomGenerator = new Math.seedrandom();
+
         if (this.nCustomers == 1) {
 			this.probInfCustomer = -1
 			this.updatePlumes = 0
@@ -44,10 +47,13 @@ class Simulation {
         this.nCustomers -= 1;
 
         let infected = 0;
-        // TODO: Fix random here
         Math.random() < this.probInfCustomer ? infected = 1 : infected = 0;
 
         // TODO Create a new customer with shopping list
+        let newCustomer = new SmartCustomer();
+        newCustomer.initShoppingList(this.store, params.MAXSHOPPINGLIST);
+        this.customers.push(newCustomer);
+        return this.customers.length;
     }
 
     // This needs to be different for us. Porbably best to give a simulation
@@ -74,12 +80,11 @@ class Simulation {
             this.customersNowInQueue[this.stepNow] = customersHeadExit
 			this.emittingCustomersNowInStore[this.stepNow] = emittingCustomers
 
-            // TODO store not defined yet
 			this.exposureDuringTimeStep[this.stepNow] = this.store.storeWideExposure
 
 
 			let emittingCustomers = 0
-			//this.store.initializeExposureDuringTimeStep()
+			this.store.initializeExposureDuringTimeStep()
 
             this.stepNow+=1
 			if (customersHeadExit>maxQueue)
@@ -92,7 +97,7 @@ class Simulation {
                 if (c.infected)
                     emittingCustomers++;
                 
-                    // let tx, ty = c.takeStep(this.store)
+                    let tx, ty = c.takeStep(this.store)
                     customersHeadExit += c.headingForExit;
                     if (tx == -1 && ty == -1)
                         customersExit.push(j);

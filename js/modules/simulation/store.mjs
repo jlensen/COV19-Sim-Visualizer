@@ -1,4 +1,5 @@
-import params from './params.mjs'
+import params from './util.mjs'
+import { randRange } from './util.mjs';
 
 class Store {
     constructor(Lx, Ly, dx) {
@@ -41,14 +42,11 @@ class Store {
     }
 
     addPlume(plumeDuration) {
-        // TODO again, the random number stuff
-        let plumePosx;
-        let plumePosy;
-        //let plumePosx = Math.random...
-        // let plumePosy = Math.random...
+        let plumePosx = Math.floor(randRange(1, this.Lx - 1));
+        let plumePosy = Math.floor(randRange(1, thi.Ly - 1));
         while (this.blocked[plumePosx][plumePosy] || this.plumes[plumePosx][plumePosy]) {
-            //plumePosx = Math.random...
-            // plumePosy = Math.random...
+            plumePosx = Math.floor(randRange(1, this.Lx - 1));
+            plumePosy = Math.floor(randRange(1, thi.Ly - 1));
         }
         this.plumes[plumePosx][plumePosy] = plumeDuration;
         return [plumePosx, plumePosy];
