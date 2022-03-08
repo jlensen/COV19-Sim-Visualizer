@@ -1,4 +1,4 @@
-import params from './util.mjs'
+import params, { randRange } from './util.mjs'
 
 const DIRECTIONS = [[-1, 0], [0, 1], [1, 0], [0, -1]];
 
@@ -35,9 +35,6 @@ class Customer {
         for (let i = 0; i < this.shoppingList.length; i++) {
             let targetInd = store.getIndexFromCoord(this.shoppingList[i]);
             let thisDist = this.store.graph.shortestPath(startInd, targetInd);
-            // TODO find out how to find paths in the store, original uses a graph with dijkstra
-            // probably need to change the way we handle the store for our version
-            //let thisDist = ...;
             if (thisDist < shortestDist) {
                 shortestDist = thisDist;
                 shortInd = i;
@@ -79,15 +76,15 @@ class Customer {
     }
 
     initShoppingList(store, maxN) {
-        // TODO random needs to be scaled here as well
-        let targetsDrawn = Math.random();
+        let targetsDrawn = randRange(0, maxN) + 1;
         while (this.shoppingList.length < targetsDrawn) {
-            let tx = Math.random();
-            let ty = Math.random();
+            let tx = randRange(0, store.Lx);
+            // from 1 so customers don't run into other customers visiting cashiers
+            let ty = randRange(1, store.Ly);
             // TODO expand this while loop check, see how to do it in javascript
             while (store.blocked[tx, ty]) {
-                tx = Math.random();
-                ty = Math.random();
+                tx = randRange(0, store.Lx);
+                ty = randRange(1, store.Ly);
             }
             this.addTarget([tx, ty]);
         }
@@ -101,18 +98,123 @@ class Customer {
         
     }
 
-    takeRandomStep() {
+    takeRandomStep(store) {
+        // TODO actually need to permute directions
+        for (let i = 0; i < DIRECTIONS.length; i++) {
+            let step = DIRECTIONS[i];
+            let tmpPos = [this.x + step, this.y + step];
 
+            if (tmpPos[0] < 0 || tmpPos[0] >= store.Lx || tmpPos[1] < 0 || tmpPos[1] >= store.Ly) {
+                continue;
+            }  else if (store.blocked[tmpPos[0]][tmpPos[1]] == 1) {
+                continue;
+            } else {
+                store.blocked[this.x][this.y] = 0;
+                this.x = tmpPos[0];
+                this.y = tmpPos[1];
+                store.blocked[this.x][this.y] = 1;
+                break;
+            }
+        }
+        return [this.x, this.y];
+    }
+
+    atExit() {
+        this.store.exit.forEach((s) => {
+            if (this.x == s[0] && this.y == s[1]) {
+                return 1;
+            }
+            return 0;
+        })
     }
 }
 
 class SmartCustomer extends Customer {
-    constructor() {
 
-    }
+    takeStep(store) {
+        this.timeInStore += 1;
 
-    takeStep() {
-        
+        if (store.plumes[this.x][this.y] && !store.useDiffusion) {
+            this.exposure += 1;
+        } else if (store.plumes[this.x][this.y] && store.useDiffusion) {
+            this.exposure += store.plumes[this.x][this.y] * store.dt;
+            if (!this.infected)
+                store.storeWideExposure += store.plumes[this.x][this.y] * store.dt;
+            if (store.plumes[this.x][this.y] > 0) {
+                this.exposureTime += 1;
+                if (store.plumes[self.x][self.y] > params.EXPOSURELIMIT) 
+                    this.exposureTimeThres += 1;
+            }
+        }
+
+        if (this.infected) 
+            this.spreadViralPlumes(store);
+
+        // TODO make sure this is correct
+        if (this.waitingTime > 0) {
+            this.waitingTime -= 1;
+            return [this.x, this.y];
+        }
+
+        if (!(this.shoppingList.length > 0)) {
+            if (!this.atExit(store)) {
+                this.shoppingList.push(store.getExit());
+                this.headingForExit = 1;
+            } else if (this.atExit(store) && this.cashierWaitingTime > 0) {
+                this.cashierWaitingTime -= 1;
+                return [this.x, this.y]; 
+            } else {
+                store.blocked[this.x][this.y] = 0;
+                return [-1, -1];
+            }
+        }
+
+        if (this.itemFound()) {
+            let itemPos = this.shoppingList.shift();
+            this.waitingTime = randRange(params.MINWAITINGTIME, params.MAXWAITINGTIME);
+            return itemPos;
+        }
+
+        if (this.path == null || !(this.path.length > 0)) {
+            this.updateFirstTarget(store);
+            let startInd = store.getIndexFromCoord([this.x, this.y]);
+            let targetInd = store.getIndexFromCoord(this.shoppingList[0]);
+
+            this.path = store.graph.shortestPath(startInd, targetInd);
+            this.path.shift();
+
+            if (!(this.path.length > 0)) {
+                itemPos = this.shoppingList.shift();
+                return itemPos;
+            }
+        }
+
+        if (!(this.path.length > 0)) {
+            console.log(this.x, this.y, this.shoppingList, this.headingForExit);
+        }
+
+        let step = store.getCoordFromIndex(this.path[0]);
+        // check that step is possible
+        if (!store.blocked[step[0]][step[1]]) {
+            store.blocked[this.x][this.y] = 0;
+            this.x = step[0];
+            this.y = step[1];
+            store.blocked[this.x][this.y] = 1;
+            this.path.shift();
+            if (!(this.path.length > 0)) {
+                this.path = null;
+            }
+
+        } else if (store.Lx * store.Ly < 101 && this.timeInStore % 180 == 0) {
+            // sanity check for sims with small environments
+            store.createStaticGraph();
+            this.path = null;
+        } else if ((!this.headingForExit && Math.random() < params.BLOCKRANDOMSTEP) || Math.random() < params.BLOCKRANDOMSTEP * 1e-2) {
+            this.takeRandomStep(store);
+            this.path = null;
+        }
+
+        return [this.x, this.y];
     }
 }
 
