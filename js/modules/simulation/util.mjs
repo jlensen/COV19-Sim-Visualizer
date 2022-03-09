@@ -32,5 +32,5 @@ let params = {
 
 export {params};
 export function randRange(low, high) {
-    return Math.random() * (high - low) + low
+    return Math.floor(Math.random() * (high - low) + low);
 };

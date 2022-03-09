@@ -21,6 +21,8 @@ class Customer {
         this.headingForExit = 0;
     }
 
+    // should be an array with only an x and a y.
+    // better to rework that later by using explicitly a point
     addTarget(target) {
         this.shoppingList.push(target);
     }
@@ -95,7 +97,7 @@ class Customer {
 
     // return some stats
     getFinalStats() {
-        
+        return [this.infected, this.initItemsList, this.timeInStore, this.exposure, this.exposureTime, this.exposureTimeThres];
     }
 
     takeRandomStep(store) {

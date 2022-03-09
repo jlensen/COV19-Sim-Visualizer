@@ -18,11 +18,26 @@ class Store {
         this.graph;
 
         // TODO check if we need all this, seems a bit useless to have it three times
-        this.plumes = new Array(this.Lx).fill(new Array(this.Ly).fill(0));
-        this.plumesNew = new Array(this.Lx).fill(new Array(this.Ly).fill(0));
-        this.plumesIntegrated = new Array(this.Lx).fill(new Array(this.Ly).fill(0));
-        this.diffusionCoeff = new Array(this.Lx).fill(new Array(this.Ly).fill(params.DIFFCOEFF));
-        this.ACSinkCoeff = new Array(this.Lx).fill(new Array(this.Ly).fill(params.ACSINKCOEFF));
+        this.plumes = new Array(this.Lx);
+        for (let i = 0; i < this.plumes.length; i++) {
+            this.plumes[i] = new Array(this.Ly).fill(0);
+        }
+        this.plumesNew = new Array(this.Lx);
+        for (let i = 0; i < this.plumesNew.length; i++) {
+            this.plumesNew[i] = new Array(this.Ly).fill(0);
+        }
+        this.plumesIntegrated = new Array(this.Lx);
+        for (let i = 0; i < this.plumesIntegrated.length; i++) {
+            this.plumesIntegrated[i] = new Array(this.Ly).fill(0);
+        }
+        this.diffusionCoeff = new Array(this.Lx);
+        for (let i = 0; i < this.diffusionCoeff.length; i++) {
+            this.diffusionCoeff[i] = new Array(this.Ly).fill(params.DIFFCOEFF);
+        }
+        this.ACSinkCoeff = new Array(this.Lx);
+        for (let i = 0; i < this.ACSinkCoeff.length; i++) {
+            this.ACSinkCoeff[i] = new Array(this.Ly).fill(params.ACSINKCOEFF);
+        }
         this.storeWideExposure = 0;
     }
 
@@ -42,11 +57,11 @@ class Store {
     }
 
     addPlume(plumeDuration) {
-        let plumePosx = Math.floor(randRange(1, this.Lx - 1));
-        let plumePosy = Math.floor(randRange(1, thi.Ly - 1));
+        let plumePosx = randRange(1, this.Lx - 1);
+        let plumePosy = randRange(1, thi.Ly - 1);
         while (this.blocked[plumePosx][plumePosy] || this.plumes[plumePosx][plumePosy]) {
-            plumePosx = Math.floor(randRange(1, this.Lx - 1));
-            plumePosy = Math.floor(randRange(1, thi.Ly - 1));
+            plumePosx = randRange(1, this.Lx - 1);
+            plumePosy = randRange(1, thi.Ly - 1);
         }
         this.plumes[plumePosx][plumePosy] = plumeDuration;
         return [plumePosx, plumePosy];
@@ -78,18 +93,17 @@ class Store {
 
     createStaticGraph() {
 		let totNodes = this.Lx * this.Ly
-		let blockedNodeList = np.asarray(self.blocked).reshape(-1)
 		this.graph = new Graph(totNodes);
 
         // connect all non-blocked spaces along x and y axis
         for (let i = 0; i < this.Ly; i++) {
             for (let j = 0; j < this.Lx; j++) {
                 // connect along x
-                if (blockedNodeList[j][i]==0 && blockedNodeList[j+1][i] == 0 && this.graph.areConnected(i * this.Lx + j,i * this.Lx + j + 1) == False) {
+                if (this.blocked[j][i]==0 && this.blocked[j+1][i] == 0 && this.graph.areConnected(i * this.Lx + j,i * this.Lx + j + 1) == False) {
 					self.staticGraph.addEdge(i * this.Lx + j, i * this.Lx + j + 1);
                 }
                 // connect along y
-                if (blockedNodeList[j][i]==0 && blockedNodeList[j][i + 1] == 0 && this.graph.areConnected(i * this.Lx + j,(i+1) * this.Lx + j) == False) {
+                if (this.blocked[j][i]==0 && this.blocked[j][i + 1] == 0 && this.graph.areConnected(i * this.Lx + j,(i+1) * this.Lx + j) == False) {
                     self.staticGraph.addEdge(i * this.Lx + j,(i+1) * this.Lx + j);
                 }
             }

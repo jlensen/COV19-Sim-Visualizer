@@ -49,7 +49,6 @@ class Simulation {
         let infected = 0;
         Math.random() < this.probInfCustomer ? infected = 1 : infected = 0;
 
-        // TODO Create a new customer with shopping list
         let newCustomer = new SmartCustomer();
         newCustomer.initShoppingList(this.store, params.MAXSHOPPINGLIST);
         this.customers.push(newCustomer);
@@ -97,22 +96,43 @@ class Simulation {
                 if (c.infected)
                     emittingCustomers++;
                 
-                    let tx, ty = c.takeStep(this.store)
+                    let [tx, ty] = c.takeStep(this.store)
                     customersHeadExit += c.headingForExit;
                     if (tx == -1 && ty == -1)
                         customersExit.push(j);
             });
 
-            // TODO add customersexit bit
+            // TODO review this later, unsure if it is right
+            // for some reason we stop before the last element?
+            for (let j = 0; j < customersExit.length - 1; j++) {
+                let leavingCustomer = this.customers.splice(leavingCustomer[j], 1);
+                this.store.updateQueue([leavingCustomer.x, leavingCustomer.y]);
+                let [ti, tx, ty, tz, tw, twt] = leavingCustomer.getFinalStats();
+                let stepStr = `step ${i} (${this.customers.length} customers, ${customersHeadExit} for exit): customer 
+                    ${ti} left with ${rx} on shopping list, ${ty} total time in store, ${tz} exposure`;
+                this.exposureHist[this.customerNow] = tz;
+                this.exposureHistTime[this.customerNow] = tw;
+                this.exposureHistTimeThres[this.customerNow] = twt;
+                this.itemsBought[this.customerNow] = tx;
+                this.timeSpent[this.customerNow] = tx;
+                this.customerInfected[this.customerNow] = ty;
+                this.customerNow += 1;
+                console.log(stepStr);
+
+            }
 
             if (this.updatePlumes && !this.useDiffusion) {
-                //self.store.plumes[self.store.plumes>0]-=1	
-				//if self.nCustomers and np.random.rand()<self.probNewCustomer:
-				//	self.newCustomer()
+                this.store.plumes.forEach((e, i) => {
+                    if (e > 0)
+                        this[i] -= 1; 
+                });
+                this.store.plumes[self.store.plumes>0]-=1;
+				if (this.nCustomers.length > 0 && Math.random() < this.probNewCustomer) 
+                    this.newCustomer();
             } else if (this.updatePlumes && this.useDiffusion) {
-                //self.store.updateDiffusion()
-				//if self.nCustomers and np.random.rand()<self.probNewCustomer:
-				//	self.newCustomer()	
+                this.store.updateDiffusion();
+				if (this.nCustomers && Math.random() < this.probNewCustomer)
+                    this.newCustomer();
             }
 
             // TODO visualize simulation every iteration
@@ -124,6 +144,7 @@ class Simulation {
         }
 
         // reached step limit, do ending things
+        console.log("Reached last step")
     }
 }
 
