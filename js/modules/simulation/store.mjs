@@ -109,6 +109,88 @@ class Store {
             }
         }
     }
+
+    initializeShelvesRegular(N, I = 2, J = 1, D = 2) {
+        this.blocked = new Array(this.Ly);
+        for (let i = 0; i < this.blocked.length; i++) {
+            this.blocked[i] = new Array(this.Lx).fill(0);
+        }
+        let placed = 0;
+        let tries = 0;
+        let II = I / this.dx;
+        let JJ = J / this.dx;
+        let DD = D / this.dx;
+
+        let axis;
+        while (placed < N) {
+            if (Math.random() < 0.5) {
+                let shelfSize = [II, JJ]
+                axis = true;
+            } else {
+                let shelfSize = [JJ, II];
+                axis = false;
+            }
+            let shelfPosx = randRange(1, this.Lx - shelfSize[0] - 1);
+            let shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1);
+
+            while ((this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0)) {
+                shelfPosx = randRange(1, this.Lx + shelfSize[0] - 1);
+                shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1);
+                tries += 1;
+                if (tries > 1e4) {
+                    this.blockedShelves = [...this.blocked];
+                    return placed;
+                }
+            }
+            this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]) = 1;
+            placed += 1;
+
+            // TODO don't know if this is the right way to choose
+            let direction = Math.random > 0.5 ? 1 : -1;
+            while (placed < N) {
+                if (axis) {
+                    shelfPosy += direction * (DD + JJ);
+                } else {
+                    shelfPosx += direction * (DD + II);
+                }
+
+                if (shelfPosx < 0 || shelfPosx >= this.Lx - shelfSize[0] - 1 || shelfPosy < 0 || shelfPosy >= this.Ly - shelfSize[1] - 1) {
+                    break;
+                }
+                if (!(this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0) > 0) {
+                    this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]) = 1;
+                    placed += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+        this.blockedShelves = [...this.blocked];
+        return placed;
+    }
+
+    initializeDoors() {
+        let entranceInd = this.getIndexFromCoord([params.ENTRANCEPOS, 0]);
+        this.entrance = this.getCoordFromIndex(entranceInd);
+
+        i = params.EXITPOS;
+        while (this.exit.length < params.NEXITS) {
+            let exitInd = this.getIndexFromCoord([this.Lx - i, 0]);
+
+            let checkPossiblePath = this.graph.shortestPath(entranceInd, exitInd).length;
+            // TODO, check if this is actually correct, is there no path if this is true?
+            while (checkPossiblePath[checkPossiblePath.length - 1] != exitInd && this.Lx - i > 0) {
+                i += 1;
+                exitInd = this.getIndexFromCoord([this.Lx - i, 0]);
+                checkPossiblePath = this.graph.shortestPath(entranceInd, exitInd).length;
+            }
+            this.exit.push(this.getCoordFromIndex(exitInd));
+            i += params.CASHIERD;
+        }
+
+        // TODO do we just pop off the last element here? they slive until last element
+        this.exit.pop();
+    }
 }
 
 // Just a simple graph implementation for now

@@ -1,9 +1,11 @@
 import params from './util.mjs'
 import { SmartCustomer } from './customer.mjs';
+import { Store } from './store.mjs';
 
 class Simulation {
 
-    constructor(seed, maxSteps, probNewCustomer) {
+    constructor(seed, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
+        nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, genStore = false) {
         // Apparently javascript random does not accept a seed
         // So for this we need to find something or implement it ourselves
         this.seed = seed;
@@ -11,6 +13,17 @@ class Simulation {
 
         this.stepNow = 0;
         this.customerNow = 0;
+
+        this.useDiffusion = useDiffusion;
+        this.store = new Store(Lx, Ly, dx);
+        if (genStore) {
+            this.store.initializeShelvesRegular(nShelves);
+        } else {
+            // load some store defined somewhere
+        }
+
+        this.store.createStaticGraph();
+        this.store.initializeDoors();
 
         // init customer info
         this.probNewCustomer = probNewCustomer;
@@ -38,6 +51,12 @@ class Simulation {
 		else {
 			this.probInfCustomer = probInfCustomer
 			this.updatePlumes=1
+        }
+
+        if (this.useDiffusion) {
+            this.store.useDiffusion = true;
+        } else {
+            this.store.useDiffusion = false;
         }
 
         this.customers = [];
