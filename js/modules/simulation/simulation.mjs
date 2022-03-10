@@ -1,5 +1,5 @@
-import params from './util.mjs'
-import { SmartCustomer } from './customer.mjs';
+import {params} from './util.mjs'
+import SmartCustomer from './customer.mjs';
 import { Store } from './store.mjs';
 
 class Simulation {
@@ -39,8 +39,6 @@ class Simulation {
 		this.customersNowInQueue = new Array(this.maxSteps).fill(0);
 		this.exposureDuringTimeStep = new Array(this.maxSteps).fill(0);
 
-        this.randomGenerator = new Math.seedrandom();
-
         if (this.nCustomers == 1) {
 			this.probInfCustomer = -1
 			this.updatePlumes = 0
@@ -63,14 +61,16 @@ class Simulation {
     }
 
     newCustomer() {
+        console.log("does this run?")
         this.nCustomers -= 1;
 
         let infected = 0;
         Math.random() < this.probInfCustomer ? infected = 1 : infected = 0;
 
-        let newCustomer = new SmartCustomer();
+        let newCustomer = new SmartCustomer(this.store.entrance[0], this.store.entrance[1], infected, params.PROBSPREADPLUME);
         newCustomer.initShoppingList(this.store, params.MAXSHOPPINGLIST);
         this.customers.push(newCustomer);
+        console.log("reached here");
         return this.customers.length;
     }
 
@@ -92,16 +92,18 @@ class Simulation {
         let customersHeadExit = 0;
         let emittingCustomers = 0;
         let maxQueue = params.WEIRDQUEUELIMIT;
+        
 
-        for (i = 0; i < this.maxSteps; i++) {
+        for (let i = 0; i < this.maxSteps; i++) {
+            console.log("Step: " + i);
             this.customersNowInStore[this.stepNow] = this.customers.length;
-            this.customersNowInQueue[this.stepNow] = customersHeadExit
+            this.customersNowInQueue[this.stepNow] = customersHeadExit;
 			this.emittingCustomersNowInStore[this.stepNow] = emittingCustomers
 
 			this.exposureDuringTimeStep[this.stepNow] = this.store.storeWideExposure
 
 
-			let emittingCustomers = 0
+			emittingCustomers = 0
 			this.store.initializeExposureDuringTimeStep()
 
             this.stepNow+=1
@@ -109,7 +111,7 @@ class Simulation {
 				maxQueue = customersHeadExit
 
 			let customersExit = [];
-			let customersHeadExit = 0;
+			customersHeadExit = 0;
 
             this.customers.forEach((c, j) => {
                 if (c.infected)
@@ -127,7 +129,7 @@ class Simulation {
                 let leavingCustomer = this.customers.splice(leavingCustomer[j], 1);
                 this.store.updateQueue([leavingCustomer.x, leavingCustomer.y]);
                 let [ti, tx, ty, tz, tw, twt] = leavingCustomer.getFinalStats();
-                let stepStr = `step ${i} (${this.customers.length} customers, ${customersHeadExit} for exit): customer 
+                stepStr = `step ${i} (${this.customers.length} customers, ${customersHeadExit} for exit): customer 
                     ${ti} left with ${rx} on shopping list, ${ty} total time in store, ${tz} exposure`;
                 this.exposureHist[this.customerNow] = tz;
                 this.exposureHistTime[this.customerNow] = tw;
@@ -145,7 +147,7 @@ class Simulation {
                     if (e > 0)
                         this[i] -= 1; 
                 });
-                this.store.plumes[self.store.plumes>0]-=1;
+                this.store.plumes[this.store.plumes>0]-=1;
 				if (this.nCustomers.length > 0 && Math.random() < this.probNewCustomer) 
                     this.newCustomer();
             } else if (this.updatePlumes && this.useDiffusion) {

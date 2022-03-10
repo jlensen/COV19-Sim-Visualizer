@@ -34,3 +34,12 @@ export {params};
 export function randRange(low, high) {
     return Math.floor(Math.random() * (high - low) + low);
 };
+
+export function checkCoordIn2DArray(x, y, array) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i][0] == x && array[i][1] == y) {
+            return true;
+        }
+    }
+    return false;
+};

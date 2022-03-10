@@ -1,5 +1,4 @@
-import params from './util.mjs'
-import { randRange } from './util.mjs';
+import {params, randRange} from './util.mjs'
 
 class Store {
     constructor(Lx, Ly, dx) {
@@ -8,7 +7,11 @@ class Store {
         this.dt = 1.0;
         this.dx = dx;
         this.dy = dx;
-        this.blocked = null
+        //this.blocked = null
+        this.blocked = new Array(this.Lx);
+        for (let i = 0; i < this.blocked.length; i++) {
+            this.blocked[i] = new Array(this.Ly).fill(0);
+        }
         this.blockedShelves = null;
         this.invLxLy = 1.0 / (Lx * Ly);
         this.entrance = null;
@@ -59,7 +62,7 @@ class Store {
     addPlume(plumeDuration) {
         let plumePosx = randRange(1, this.Lx - 1);
         let plumePosy = randRange(1, thi.Ly - 1);
-        while (this.blocked[plumePosx][plumePosy] || this.plumes[plumePosx][plumePosy]) {
+        while (this.blocked[plumePosx][plumePosy] == 1 || this.plumes[plumePosx][plumePosy] == 1) {
             plumePosx = randRange(1, this.Lx - 1);
             plumePosy = randRange(1, thi.Ly - 1);
         }
@@ -82,9 +85,22 @@ class Store {
     }
 
     getExit() {
-        exitInd = Math.min(this.exitActive);
+        //let exitInd = Math.min(this.exitActive);
+        let exitInd = this.findMinExit(this.exitActive);
         this.exitActive[exitInd] += 1;
         return this.exit[exitInd];
+    }
+
+    findMinExit(exits) {
+        let minIdx = 0;
+        let min = exits[0][0] + exits[0][1];
+        for (let i = 1; i < exits; i++) {
+            let sum = exits[i][0] + exits[i][1];
+            if (sum < min)
+                min = sum;
+                minIdx = i;
+        }
+        return minIdx;
     }
 
     updateQueue(exitPos) {
@@ -94,18 +110,30 @@ class Store {
     createStaticGraph() {
 		let totNodes = this.Lx * this.Ly
 		this.graph = new Graph(totNodes);
+        let blockedNodesList = [].concat.apply([], this.blocked);
 
         // connect all non-blocked spaces along x and y axis
-        for (let i = 0; i < this.Ly; i++) {
+        /*for (let i = 0; i < this.Ly; i++) {
             for (let j = 0; j < this.Lx; j++) {
                 // connect along x
-                if (this.blocked[j][i]==0 && this.blocked[j+1][i] == 0 && this.graph.areConnected(i * this.Lx + j,i * this.Lx + j + 1) == False) {
-					self.staticGraph.addEdge(i * this.Lx + j, i * this.Lx + j + 1);
+                if (this.blocked[j][i]==0 && this.blocked[j+1][i] == 0 && this.graph.areConnected(i * this.Lx + j,i * this.Lx + j + 1) == false) {
+					this.graph.addEdge(i * this.Lx + j, i * this.Lx + j + 1);
                 }
                 // connect along y
-                if (this.blocked[j][i]==0 && this.blocked[j][i + 1] == 0 && this.graph.areConnected(i * this.Lx + j,(i+1) * this.Lx + j) == False) {
-                    self.staticGraph.addEdge(i * this.Lx + j,(i+1) * this.Lx + j);
+                if (this.blocked[j][i]==0 && this.blocked[j][i + 1] == 0 && this.graph.areConnected(i * this.Lx + j,(i+1) * this.Lx + j) == false) {
+                    this.graph.addEdge(i * this.Lx + j,(i+1) * this.Lx + j);
                 }
+            }
+        }*/
+        for (let i = 0; i < totNodes; i++) {
+            if (blockedNodesList[i]==0 && blockedNodesList[i+1] == 0 && this.graph.areConnected(i,i + 1) == false && i + 1 % this.Lx != 0) {
+                this.graph.addEdge(i, i + 1);
+            }
+        }
+
+        for (let i = 0; i < totNodes; i++) {
+            if (blockedNodesList[i]==0 && blockedNodesList[i+this.Lx] == 0 && this.graph.areConnected(i,i + this.Lx) == false) {
+                this.graph.addEdge(i, i + this.Lx);
             }
         }
     }
@@ -122,12 +150,13 @@ class Store {
         let DD = D / this.dx;
 
         let axis;
+        let shelfSize;
         while (placed < N) {
             if (Math.random() < 0.5) {
-                let shelfSize = [II, JJ]
+                shelfSize = [II, JJ]
                 axis = true;
             } else {
-                let shelfSize = [JJ, II];
+                shelfSize = [JJ, II];
                 axis = false;
             }
             let shelfPosx = randRange(1, this.Lx - shelfSize[0] - 1);
@@ -142,7 +171,12 @@ class Store {
                     return placed;
                 }
             }
-            this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]) = 1;
+            //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]).fill(1);
+            for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
+                for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
+                    this.blocked[i][j] = 1;
+                }
+            }
             placed += 1;
 
             // TODO don't know if this is the right way to choose
@@ -158,7 +192,12 @@ class Store {
                     break;
                 }
                 if (!(this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0) > 0) {
-                    this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]) = 1;
+                    //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]).fill(1);
+                    for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
+                        for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
+                            this.blocked[i][j] = 1;
+                        }
+                    }
                     placed += 1;
                 } else {
                     break;
@@ -173,22 +212,22 @@ class Store {
         let entranceInd = this.getIndexFromCoord([params.ENTRANCEPOS, 0]);
         this.entrance = this.getCoordFromIndex(entranceInd);
 
-        i = params.EXITPOS;
+        let i = params.EXITPOS;
         while (this.exit.length < params.NEXITS) {
             let exitInd = this.getIndexFromCoord([this.Lx - i, 0]);
 
-            let checkPossiblePath = this.graph.shortestPath(entranceInd, exitInd).length;
+            let checkPossiblePath = this.graph.shortestPath(entranceInd, exitInd);
             // TODO, check if this is actually correct, is there no path if this is true?
-            while (checkPossiblePath[checkPossiblePath.length - 1] != exitInd && this.Lx - i > 0) {
+            while (checkPossiblePath.pop() != exitInd && this.Lx - i > 0) {
                 i += 1;
                 exitInd = this.getIndexFromCoord([this.Lx - i, 0]);
-                checkPossiblePath = this.graph.shortestPath(entranceInd, exitInd).length;
+                checkPossiblePath = this.graph.shortestPath(entranceInd, exitInd);
             }
             this.exit.push(this.getCoordFromIndex(exitInd));
             i += params.CASHIERD;
         }
 
-        // TODO do we just pop off the last element here? they slive until last element
+        // TODO do we just pop off the last element here? they slice until last element
         this.exit.pop();
     }
 }
@@ -210,7 +249,7 @@ class Graph {
         }
         this.edges[source][target] = true;
         // adding reverse gives problems, but if we always search from low to high it shouldn't give problems
-        //this.edges[target][source] = true;
+        this.edges[target][source] = true;
     }
 
     areConnected(a, b) {
@@ -226,11 +265,12 @@ class Graph {
         let currentNode;
         while (queue.length > 0) {
             currentNode = queue.shift();
+            visited[currentNode] = true;
             for (let i = 0; i < this.edges[currentNode].length; i++) {
                 if (!this.edges[currentNode][i]) {
                     continue;
                 }
-                if (visited[i] == false) {
+                if (!visited[i]) {
                     visited[i] = true;
                     queue.push(i);
                     pred[i] = currentNode;
@@ -252,6 +292,7 @@ class Graph {
                 break;
             }
         }
+        console.log("done");
         return path.reverse();
     }
 }

@@ -1,4 +1,4 @@
-import params, { randRange } from './util.mjs'
+import {params, randRange, checkCoordIn2DArray} from './util.mjs'
 
 const DIRECTIONS = [[-1, 0], [0, 1], [1, 0], [0, -1]];
 
@@ -36,7 +36,7 @@ class Customer {
 
         for (let i = 0; i < this.shoppingList.length; i++) {
             let targetInd = store.getIndexFromCoord(this.shoppingList[i]);
-            let thisDist = this.store.graph.shortestPath(startInd, targetInd);
+            let thisDist = store.graph.shortestPath(startInd, targetInd);
             if (thisDist < shortestDist) {
                 shortestDist = thisDist;
                 shortInd = i;
@@ -55,7 +55,7 @@ class Customer {
         if (this.shoppingList.length == 0) {
             return;
         }
-
+        console.log(this.shoppingList.length, this.shoppingList[0], this.shoppingList[1])
         let itemPos = this.shoppingList[0];
         if (this.x == itemPos[0] && this.y == itemPos[1]) {
             return true;
@@ -80,11 +80,23 @@ class Customer {
     initShoppingList(store, maxN) {
         let targetsDrawn = randRange(0, maxN) + 1;
         while (this.shoppingList.length < targetsDrawn) {
+            console.log("still shoppinglist")
             let tx = randRange(0, store.Lx);
             // from 1 so customers don't run into other customers visiting cashiers
             let ty = randRange(1, store.Ly);
+            //console.log(store.blocked);
+            //console.log(store.blocked[tx][ty]);
+            //console.log(checkCoordIn2DArray(tx, ty, this.shoppingList))
+            //console.log(checkCoordIn2DArray(tx, ty, store.exit))
+            //console.log((store.entrance[0] == tx && store.entrance[1] == ty))
+            //console.log(store.blockedShelves[tx][ty - 1] == 0 && store.blockedShelves[tx][ty - 1] != undefined) 
+            //break;
             // TODO expand this while loop check, see how to do it in javascript
-            while (store.blocked[tx, ty]) {
+            while (store.blocked[tx][ty] == 1 || checkCoordIn2DArray(tx, ty, this.shoppingList) || checkCoordIn2DArray(tx, ty, store.exit)
+            || (store.entrance[0] == tx && store.entrance[1] == ty) || (tx < 1 || ty < 1) || (tx < 3 && ty < 3) ||
+            !(store.blockedShelves[tx][ty - 1] == 1 || (ty + 1 < store.Ly && store.blockedShelves[tx][ty + 1] == 1)) ||
+            store.blockedShelves[tx - 1][ty] == 1 || (tx + 1 < store.Lx && (store.blockedShelves[tx + 1][ty] == 1 && store.blockedShelves[tx + 1][ty] != undefined))) {
+                console.log("help");
                 tx = randRange(0, store.Lx);
                 ty = randRange(1, store.Ly);
             }
@@ -121,8 +133,8 @@ class Customer {
         return [this.x, this.y];
     }
 
-    atExit() {
-        this.store.exit.forEach((s) => {
+    atExit(store) {
+        store.exit.forEach((s) => {
             if (this.x == s[0] && this.y == s[1]) {
                 return 1;
             }
@@ -132,13 +144,15 @@ class Customer {
 }
 
 class SmartCustomer extends Customer {
+    constructor(x, y, infected = 0, probSpreadPlume = params.PROBSPREADPLUME) {
+        super(x, y, infected = 0, probSpreadPlume = params.PROBSPREADPLUME);
+    }
 
     takeStep(store) {
         this.timeInStore += 1;
-
-        if (store.plumes[this.x][this.y] && !store.useDiffusion) {
+        if (store.plumes[this.x][this.y] == 1 && !store.useDiffusion) {
             this.exposure += 1;
-        } else if (store.plumes[this.x][this.y] && store.useDiffusion) {
+        } else if (store.plumes[this.x][this.y] == 1 && store.useDiffusion) {
             this.exposure += store.plumes[this.x][this.y] * store.dt;
             if (!this.infected)
                 store.storeWideExposure += store.plumes[this.x][this.y] * store.dt;
