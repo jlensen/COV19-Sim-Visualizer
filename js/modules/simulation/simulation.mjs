@@ -107,7 +107,7 @@ class Simulation {
 			emittingCustomers = 0
 			this.store.initializeExposureDuringTimeStep()
 
-            this.stepNow+=1
+            this.stepNow += 1
 			if (customersHeadExit>maxQueue)
 				maxQueue = customersHeadExit
 
@@ -115,24 +115,27 @@ class Simulation {
 			customersHeadExit = 0;
 
             this.customers.forEach((c, j) => {
-                if (c.infected)
+                if (c.infected) {
                     emittingCustomers++;
+                }
                 
-                    let [tx, ty] = c.takeStep(this.store)
-                    customersHeadExit += c.headingForExit;
-                    if (tx == -1 && ty == -1)
-                        customersExit.push(j);
+                let [tx, ty] = c.takeStep(this.store)
+                customersHeadExit += c.headingForExit;
+                if (tx == -1 && ty == -1) {
+                    customersExit.push(j);
+                }
             });
 
             console.log("custexit: " + customersExit.length);
             // TODO review this later, unsure if it is right
             // for some reason we stop before the last element?
-            for (let j = 0; j < customersExit.length - 1; j++) {
-                let leavingCustomer = this.customers.splice(j, 1);
+            for (let j = customersExit.length - 1; j >= 0; j--) {
+                // we loop in reverse so we can remove indexes without problems
+                let leavingCustomer = this.customers.splice(customersExit[j], 1)[0];
                 this.store.updateQueue([leavingCustomer.x, leavingCustomer.y]);
                 let [ti, tx, ty, tz, tw, twt] = leavingCustomer.getFinalStats();
                 stepStr = `step ${i} (${this.customers.length} customers, ${customersHeadExit} for exit): customer 
-                    ${ti} left with ${rx} on shopping list, ${ty} total time in store, ${tz} exposure`;
+                    ${ti} left with ${tx} on shopping list, ${ty} total time in store, ${tz} exposure`;
                 this.exposureHist[this.customerNow] = tz;
                 this.exposureHistTime[this.customerNow] = tw;
                 this.exposureHistTimeThres[this.customerNow] = twt;

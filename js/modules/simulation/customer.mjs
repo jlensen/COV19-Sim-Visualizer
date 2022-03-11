@@ -46,8 +46,9 @@ class Customer {
             // can throw error if we want
         } else {
             // add specified item at the beginning and remove value at its original position
+            // TODO check this
             this.shoppingList.splice(0, 0, this.shoppingList[shortInd]);
-            this.shoppingList.splice(shortInd, 1);
+            this.shoppingList.splice(shortInd + 1, 1);
             //this.shoppingList.unshift(this.shoppingList.splice(shortInd, 1)[0]);
         }
     }
@@ -134,12 +135,18 @@ class Customer {
     }
 
     atExit(store) {
-        store.exit.forEach((s) => {
-            if (this.x == s[0] && this.y == s[1]) {
-                return 1;
+        for (let i = 0; i < store.exit.length; i++) {
+            if (this.x == store.exit[i][0] && this.y == store.exit[i][1]) {
+                return true;
             }
-            return 0;
-        })
+            return false;
+        }
+        //store.exit.forEach((s) => {
+        //    if (this.x == s[0] && this.y == s[1]) {
+        //        return true;
+        //    }
+        //    return false;
+        //})
     }
 }
 
@@ -172,14 +179,18 @@ class SmartCustomer extends Customer {
             return [this.x, this.y];
         }
 
+        // heading for exit
         if (this.shoppingList.length == 0) {
             if (!this.atExit(store)) {
+                console.log("so last of shopping list is reached!")
                 this.shoppingList.push(store.getExit());
                 this.headingForExit = 1;
             } else if (this.atExit(store) && this.cashierWaitingTime > 0) {
                 this.cashierWaitingTime -= 1;
+                console.log("still waiting: " + this.cashierWaitingTime)
                 return [this.x, this.y]; 
             } else {
+                console.log("is this even reached?");
                 store.blocked[this.x][this.y] = 0;
                 return [-1, -1];
             }
