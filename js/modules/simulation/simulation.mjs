@@ -41,14 +41,14 @@ class Simulation {
 
         if (this.nCustomers == 1) {
 			this.probInfCustomer = -1
-			this.updatePlumes = 0
+			this.updatePlumes = false
 
             // TODO: Look at what this is and if we need it?
 			//this.store.initStaticPlumeField(nPlumes)
         }
 		else {
 			this.probInfCustomer = probInfCustomer
-			this.updatePlumes=1
+			this.updatePlumes=true
         }
 
         if (this.useDiffusion) {
@@ -96,6 +96,7 @@ class Simulation {
 
         for (let i = 0; i < this.maxSteps; i++) {
             console.log("Step: " + i);
+            console.log("customers: " + this.customers.length);
             this.customersNowInStore[this.stepNow] = this.customers.length;
             this.customersNowInQueue[this.stepNow] = customersHeadExit;
 			this.emittingCustomersNowInStore[this.stepNow] = emittingCustomers
@@ -123,10 +124,11 @@ class Simulation {
                         customersExit.push(j);
             });
 
+            console.log("custexit: " + customersExit.length);
             // TODO review this later, unsure if it is right
             // for some reason we stop before the last element?
             for (let j = 0; j < customersExit.length - 1; j++) {
-                let leavingCustomer = this.customers.splice(leavingCustomer[j], 1);
+                let leavingCustomer = this.customers.splice(j, 1);
                 this.store.updateQueue([leavingCustomer.x, leavingCustomer.y]);
                 let [ti, tx, ty, tz, tw, twt] = leavingCustomer.getFinalStats();
                 stepStr = `step ${i} (${this.customers.length} customers, ${customersHeadExit} for exit): customer 
@@ -145,10 +147,10 @@ class Simulation {
             if (this.updatePlumes && !this.useDiffusion) {
                 this.store.plumes.forEach((e, i) => {
                     if (e > 0)
-                        this[i] -= 1; 
+                        this.store.plumes[i] -= 1; 
                 });
                 this.store.plumes[this.store.plumes>0]-=1;
-				if (this.nCustomers.length > 0 && Math.random() < this.probNewCustomer) 
+				if (this.nCustomers > 0 && Math.random() < this.probNewCustomer) 
                     this.newCustomer();
             } else if (this.updatePlumes && this.useDiffusion) {
                 this.store.updateDiffusion();
@@ -158,7 +160,7 @@ class Simulation {
 
             // TODO visualize simulation every iteration
 
-            if (!this.nCustomers && this.customers.length == 0) {
+            if (this.nCustomers == 0 && this.customers.length == 0) {
                 // end condition, do whatever we want?
                 return;
             }

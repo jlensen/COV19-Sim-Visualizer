@@ -27,35 +27,36 @@ class Customer {
         this.shoppingList.push(target);
     }
 
-    // Assumes custome rbehaves logically, so goes to closest product on list first
+    // Assumes customer behaves logically, so goes to closest product on list first
     updateFirstTarget(store) {
-        let shortestDist;
+        let shortestDist = 1e8;
         let shortInd = null;
 
         let startInd = store.getIndexFromCoord([this.x, this.y]);
 
         for (let i = 0; i < this.shoppingList.length; i++) {
             let targetInd = store.getIndexFromCoord(this.shoppingList[i]);
-            let thisDist = store.graph.shortestPath(startInd, targetInd);
+            let thisDist = store.graph.shortestPath(startInd, targetInd).length;
             if (thisDist < shortestDist) {
                 shortestDist = thisDist;
                 shortInd = i;
             }
         }
         if (shortInd == null) {
-            // can thorw error if we want
+            // can throw error if we want
         } else {
             // add specified item at the beginning and remove value at its original position
             this.shoppingList.splice(0, 0, this.shoppingList[shortInd]);
             this.shoppingList.splice(shortInd, 1);
+            //this.shoppingList.unshift(this.shoppingList.splice(shortInd, 1)[0]);
         }
     }
 
     itemFound() {
         if (this.shoppingList.length == 0) {
-            return;
+            return false;
         }
-        console.log(this.shoppingList.length, this.shoppingList[0], this.shoppingList[1])
+        console.log(this.shoppingList.length, this.shoppingList[0], this.shoppingList[1], this.x, this.y)
         let itemPos = this.shoppingList[0];
         if (this.x == itemPos[0] && this.y == itemPos[1]) {
             return true;
@@ -66,13 +67,13 @@ class Customer {
     spreadViralPlumes(store) {
         let sample = Math.random();
         if (sample < this.probSpreadPlume && !store.useDiffusion) {
-            store.plumes[this.x, this.y] = params.PLUMELIFETIME;
+            store.plumes[this.x][this.y] = params.PLUMELIFETIME;
         } else if (store.useDiffusion) {
             if (sample < this.probSpreadPlume) {
-                store.plumes[this.x, this.y] += params.PLUMECONCINC;
+                store.plumes[this.x][this.y] += params.PLUMECONCINC;
                 // can print that customer coughed as well, but probably not needed
             } else {
-                store.plumes[this.x, this.y] += params.PLUMECONCCONT;
+                store.plumes[this.x][this.y] += params.PLUMECONCCONT;
             }
         }
     }
@@ -80,7 +81,6 @@ class Customer {
     initShoppingList(store, maxN) {
         let targetsDrawn = randRange(0, maxN) + 1;
         while (this.shoppingList.length < targetsDrawn) {
-            console.log("still shoppinglist")
             let tx = randRange(0, store.Lx);
             // from 1 so customers don't run into other customers visiting cashiers
             let ty = randRange(1, store.Ly);
@@ -116,8 +116,8 @@ class Customer {
         // TODO actually need to permute directions
         for (let i = 0; i < DIRECTIONS.length; i++) {
             let step = DIRECTIONS[i];
-            let tmpPos = [this.x + step, this.y + step];
-
+            let tmpPos = [parseInt(this.x) + parseInt(step[0]), parseInt(this.y) + parseInt(step[1])];
+            console.log("tmppos: " + tmpPos);
             if (tmpPos[0] < 0 || tmpPos[0] >= store.Lx || tmpPos[1] < 0 || tmpPos[1] >= store.Ly) {
                 continue;
             }  else if (store.blocked[tmpPos[0]][tmpPos[1]] == 1) {
@@ -172,7 +172,7 @@ class SmartCustomer extends Customer {
             return [this.x, this.y];
         }
 
-        if (!(this.shoppingList.length > 0)) {
+        if (this.shoppingList.length == 0) {
             if (!this.atExit(store)) {
                 this.shoppingList.push(store.getExit());
                 this.headingForExit = 1;
@@ -200,7 +200,7 @@ class SmartCustomer extends Customer {
             this.path.shift();
 
             if (!(this.path.length > 0)) {
-                itemPos = this.shoppingList.shift();
+                let itemPos = this.shoppingList.shift();
                 return itemPos;
             }
         }
@@ -225,7 +225,7 @@ class SmartCustomer extends Customer {
             // sanity check for sims with small environments
             store.createStaticGraph();
             this.path = null;
-        } else if ((!this.headingForExit && Math.random() < params.BLOCKRANDOMSTEP) || Math.random() < params.BLOCKRANDOMSTEP * 1e-2) {
+        } else if ((this.headingForExit > 0 && Math.random() < params.BLOCKRANDOMSTEP) || Math.random() < params.BLOCKRANDOMSTEP * 1e-2) {
             this.takeRandomStep(store);
             this.path = null;
         }

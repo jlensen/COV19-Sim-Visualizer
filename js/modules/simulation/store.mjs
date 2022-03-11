@@ -54,9 +54,10 @@ class Store {
         this.storeWideExposure = 0;
     }
 
+    // TODO fix this. A lot of slicing involved. Only really for infection
+    // get general sim working first
     updateDiffusion() {
         this.plumesNew = [...this.plumes];
-
     }
 
     addPlume(plumeDuration) {
@@ -87,8 +88,10 @@ class Store {
     getExit() {
         //let exitInd = Math.min(this.exitActive);
         let exitInd = this.findMinExit(this.exitActive);
+        console.log("exit is: " + exitInd);
         this.exitActive[exitInd] += 1;
-        return this.exit[exitInd];
+        let exit = this.exit[exitInd];
+        return [parseInt(exit[0]), parseInt(exit[1])];
     }
 
     findMinExit(exits) {
@@ -104,7 +107,12 @@ class Store {
     }
 
     updateQueue(exitPos) {
-        this.exitActive[this.exit.find(exitPos)] -= 1;
+        for (let i = 0; i < this.exit.length; i++) {
+            if (this.exit[i][0] == exitPos[0] && this.exit[i][1] == exitPos[1])
+                this.exitActive[i] -= 1;
+                break;
+        }
+        //this.exitActive[this.exit.find(exitPos)] -= 1;
     }
 
     createStaticGraph() {
@@ -257,6 +265,10 @@ class Graph {
     }
 
     shortestPath(source, target) {
+        //console.log("called with: " + source + " " + target);
+        if (source == target) {
+            return [];
+        }
         let visited = new Array(this.edges.length).fill(false);
         let queue = [];
         let pred = new Array(this.edges.length).fill(-1);
@@ -292,7 +304,8 @@ class Graph {
                 break;
             }
         }
-        console.log("done");
+        //console.log("done");
+        //console.log(path);
         return path.reverse();
     }
 }
