@@ -147,10 +147,6 @@ class Store {
     }
 
     initializeShelvesRegular(N, I = 2, J = 1, D = 2) {
-        this.blocked = new Array(this.Ly);
-        for (let i = 0; i < this.blocked.length; i++) {
-            this.blocked[i] = new Array(this.Lx).fill(0);
-        }
         let placed = 0;
         let tries = 0;
         let II = I / this.dx;
