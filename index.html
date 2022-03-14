@@ -64,7 +64,7 @@
                         
                         <div class="form-group row">
                             <div class="col-sm-2">
-                              <button type="submit" class="btn btn-primary" onclick="Save()">Run Simulation</button>
+                              <button type="submit" class="btn btn-primary" onclick="Run()">Run Simulation</button>
                             </div>
                         </div>
                     </form>
@@ -77,8 +77,8 @@
     </div>
 </body>
 <script>
-    function Save() {
-        var results = document.getElementById("prob_cust").value;
+    function Run() {
+        /** Hier moet dus nog de simulatie bij komen */
         let myForm = document.getElementById("myForm");
         let formData = new FormData(myForm);
         document.getElementById("yourOutputDiv").innerHTML = formData.get('prob_cust');
