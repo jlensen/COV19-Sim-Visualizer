@@ -180,6 +180,11 @@ class Store {
             //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]).fill(1);
             for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
                 for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
+                    // TODO, check this later, why is it sometimes smaller than 0
+                    console.log(i, j)
+                    if (i < 0 || j < 0) {
+                        continue;
+                    }
                     this.blocked[i][j] = 1;
                 }
             }

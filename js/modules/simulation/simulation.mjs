@@ -12,6 +12,9 @@ class Simulation {
         this.seed = seed;
         this.maxSteps = maxSteps;
 
+        // we will use this for now to stop the ticker eventually
+        this.ticker;
+
         this.stepNow = 0;
         this.customerNow = 0;
         this.app = app;
@@ -109,11 +112,16 @@ class Simulation {
         for (let i = 0; i < this.store.blocked.length; i++) {
             for (let j = 0; j < this.store.blocked[i].length; j++) {
                 if (this.store.blocked[i][j] == 1) {
-                this.graphics2.beginFill(0xff00ff);
+                this.graphics2.beginFill(0x1c1f1d);
                 this.graphics2.drawRect(this.scale * i, this.scale * j, this.scale, this.scale);
                 this.graphics2.endFill();
             }
         }
+        }
+        for (let i = 0; i < this.store.exit.length; i++) {
+            this.graphics2.beginFill(0x9a53fc);
+            this.graphics2.drawRect(this.scale * this.store.exit[i][0], this.scale * this.store.exit[i][1], this.scale, this.scale);
+            this.graphics2.endFill();
         }
         this.app.render(this.stage);
     }
@@ -232,6 +240,22 @@ class Simulation {
                 return;
             }
             this.currentStep++;
+    }
+
+    restart() {
+        this.customers = []
+        this.probNewCustomer = probNewCustomer;
+        this.nCustomers = nCustomers;
+        this.exposureHist = new Array(this.nCustomers).fill(0);
+		this.exposureHistTime = new Array(this.nCustomers).fill(0);
+		this.exposureHistTimeThres = new Array(this.nCustomers).fill(0);
+		this.itemsBought = new Array(this.nCustomers).fill(0) ;
+		this.timeSpent = new Array(this.nCustomers).fill(0) ;
+		this.customerInfected = new Array(this.nCustomers).fill(0) ;
+		this.customersNowInStore = new Array(this.maxSteps).fill(0);
+		this.emittingCustomersNowInStore = new Array(this.maxSteps).fill(0);
+		this.customersNowInQueue = new Array(this.maxSteps).fill(0);
+		this.exposureDuringTimeStep = new Array(this.maxSteps).fill(0);
     }
 
     runSimulation() {
