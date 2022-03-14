@@ -4,15 +4,63 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css"/>
+    <!-- <link rel="stylesheet" href="css/style.css"/> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <!-- For now we load the simulation page code here to test, later should be its own 
-    page probably-->
-    <script type="module" src="./js/simpage.js"></script>
+    
 
     <title>Covid Store Simulation</title>
 </head>
-<body>
 
+<body>
+    <div class="jumbotron">
+        <h1 class="display-4">Hello, world!</h1>
+        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        <hr class="my-4">
+        <div class="row">
+            <div class="col-sm">
+                <p>*Simulation Here*</p>
+                <!-- For now we load the simulation page code here to test, later should be its own 
+                page probably-->
+                <!-- <script type="module" src="./js/simpage.js"></script> -->
+            </div>
+            <div class="col-sm">
+                <div class="column">
+                    <form>
+                        <div class="form-group row">
+                            <label for="parameter1" class="col-sm-2 col-form-label">parameter1</label>
+                            <div class="col-sm-10">
+                                <input type="parameter1" class="form-control" id="parameter1" placeholder="parameter1">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="parameter2" class="col-sm-2 col-form-label">parameter2</label>
+                            <div class="col-sm-10">
+                                <input type="parameter2" class="form-control" id="parameter2" placeholder="parameter2">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="parameter3" class="col-sm-2 col-form-label">parameter3</label>
+                            <div class="col-sm-10">
+                                <select class="form-control">
+                                    <option>Option 1</option>
+                                    <option>Option 2</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                              <button type="submit" class="btn btn-primary">Use parameters</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        <p class="lead">
+          <a class="btn btn-primary btn-lg" href="#" role="button">*Add simulation here*</a>
+        </p>
+      </div>
 </body>
 </html>
