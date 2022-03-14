@@ -1,7 +1,7 @@
 let params = {
     // some params related to the exits
-    NEXITS : 5, 
-    CASHIERD : 14, 
+    NEXITS : 3, 
+    CASHIERD : 2, 
     ENTRANCEPOS : 0,
     EXITPOS : 1,
 

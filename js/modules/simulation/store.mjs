@@ -166,12 +166,14 @@ class Store {
             let shelfPosx = randRange(1, this.Lx - shelfSize[0] - 1);
             let shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1);
 
-            while ((this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0)) {
+            //while ((this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0)) {
+            while (this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0) > 0) {
                 shelfPosx = randRange(1, this.Lx + shelfSize[0] - 1);
                 shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1);
                 tries += 1;
                 if (tries > 1e4) {
-                    this.blockedShelves = [...this.blocked];
+                    //this.blockedShelves = [...this.blocked];
+                    this.blockedShelves = this.blocked.map((a) => a.slice());
                     return placed;
                 }
             }
@@ -181,6 +183,9 @@ class Store {
                     this.blocked[i][j] = 1;
                 }
             }
+            //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).forEach((_, i) => {
+            //    this[i] = 1;
+            //});
             placed += 1;
 
             // TODO don't know if this is the right way to choose
@@ -195,7 +200,7 @@ class Store {
                 if (shelfPosx < 0 || shelfPosx >= this.Lx - shelfSize[0] - 1 || shelfPosy < 0 || shelfPosy >= this.Ly - shelfSize[1] - 1) {
                     break;
                 }
-                if (!(this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0) > 0) {
+                if (!(this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0) > 0)) {
                     //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]).fill(1);
                     for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
                         for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
@@ -208,7 +213,8 @@ class Store {
                 }
             }
         }
-        this.blockedShelves = [...this.blocked];
+        //this.blockedShelves = [...this.blocked];
+        this.blockedShelves = this.blocked.map((a) => a.slice());
         return placed;
     }
 
@@ -218,8 +224,7 @@ class Store {
 
         let i = params.EXITPOS;
         while (this.exit.length < params.NEXITS) {
-            let exitInd = this.getIndexFromCoord([this.Lx - i, 0]);
-
+            let exitInd = this.getIndexFromCoord([parseInt(this.Lx) - i, 0]);
             let checkPossiblePath = this.graph.shortestPath(entranceInd, exitInd);
             // TODO, check if this is actually correct, is there no path if this is true?
             while (checkPossiblePath.pop() != exitInd && this.Lx - i > 0) {

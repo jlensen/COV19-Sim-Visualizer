@@ -4,9 +4,10 @@ const DIRECTIONS = [[-1, 0], [0, 1], [1, 0], [0, -1]];
 
 class Customer {
 
-    constructor(x, y, infected = 0, probSpreadPlume = params.PROBSPREADPLUME) {
+    constructor(x, y, infected, probSpreadPlume = params.PROBSPREADPLUME) {
         this.x = x;
         this.y = y;
+        console.log("constructorinf: " + infected)
         this.infected = infected;
         this.shoppingList = [];
         this.path = null;
@@ -95,11 +96,17 @@ class Customer {
             // TODO expand this while loop check, see how to do it in javascript
             while (store.blocked[tx][ty] == 1 || checkCoordIn2DArray(tx, ty, this.shoppingList) || checkCoordIn2DArray(tx, ty, store.exit)
             || (store.entrance[0] == tx && store.entrance[1] == ty) || (tx < 1 || ty < 1) || (tx < 3 && ty < 3) ||
-            !(store.blockedShelves[tx][ty - 1] == 1 || (ty + 1 < store.Ly && store.blockedShelves[tx][ty + 1] == 1)) ||
-            store.blockedShelves[tx - 1][ty] == 1 || (tx + 1 < store.Lx && (store.blockedShelves[tx + 1][ty] == 1 && store.blockedShelves[tx + 1][ty] != undefined))) {
-                console.log("help");
+            !(store.blockedShelves[tx][ty - 1] == 1 || (ty + 1 < store.Ly && store.blockedShelves[tx][ty + 1] == 1) ||
+            (tx - 1 >= 0 || store.blockedShelves[tx - 1][ty] == 1) || (tx + 1 < store.Lx && (store.blockedShelves[tx + 1][ty] == 1 && store.blockedShelves[tx + 1][ty] != undefined)))) {
+                console.log(tx, ty)
+                //console.log(!(store.blockedShelves[tx][ty - 1] == 1 || (ty + 1 < store.Ly && store.blockedShelves[tx][ty + 1] == 1) ||
+                //store.blockedShelves[tx - 1][ty] == 1 || (tx + 1 < store.Lx && store.blockedShelves[tx + 1][ty] == 1)))
+                //console.log(store.blockedShelves[tx-1][ty])
+                store.blocked[tx][ty] == 1
                 tx = randRange(0, store.Lx);
                 ty = randRange(1, store.Ly);
+                
+                console.log("end")
             }
             this.addTarget([tx, ty]);
         }
@@ -151,8 +158,8 @@ class Customer {
 }
 
 class SmartCustomer extends Customer {
-    constructor(x, y, infected = 0, probSpreadPlume = params.PROBSPREADPLUME) {
-        super(x, y, infected = 0, probSpreadPlume = params.PROBSPREADPLUME);
+    constructor(x, y, infected, probSpreadPlume = params.PROBSPREADPLUME) {
+        super(x, y, infected, probSpreadPlume = params.PROBSPREADPLUME);
     }
 
     takeStep(store) {

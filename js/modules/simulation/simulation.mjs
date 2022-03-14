@@ -28,14 +28,17 @@ class Simulation {
 
         this.useDiffusion = useDiffusion;
         this.store = new Store(Lx, Ly, dx);
+        console.log("the shelves are the problem")
         if (genStore) {
             this.store.initializeShelvesRegular(nShelves);
         } else {
             // load some store defined somewhere
         }
-
+        console.log("we are past the shelves")
         this.store.createStaticGraph();
+        console.log("we have created the graph")
         this.store.initializeDoors();
+        console.log("we have created the doors")
 
         // init customer info
         this.probNewCustomer = probNewCustomer;
@@ -56,7 +59,7 @@ class Simulation {
 			this.updatePlumes = false
 
             // TODO: Look at what this is and if we need it?
-			//this.store.initStaticPlumeField(nPlumes)
+			this.store.initStaticPlumeField(nPlumes)
         }
 		else {
 			this.probInfCustomer = probInfCustomer
@@ -70,6 +73,7 @@ class Simulation {
         }
 
         this.customers = [];
+        console.log("we have reached end constructor")
     }
 
     newCustomer() {
@@ -77,8 +81,11 @@ class Simulation {
         this.nCustomers -= 1;
 
         let infected = 0;
-        Math.random() < this.probInfCustomer ? infected = 1 : infected = 0;
-
+        let rand = Math.random();
+        console.log("random: " + rand)
+        console.log(rand < this.probInfCustomer)
+        rand < this.probInfCustomer ? infected = 1 : infected = 0;
+        console.log(infected)
         let newCustomer = new SmartCustomer(this.store.entrance[0], this.store.entrance[1], infected, params.PROBSPREADPLUME);
         newCustomer.initShoppingList(this.store, params.MAXSHOPPINGLIST);
         this.customers.push(newCustomer);
@@ -101,10 +108,10 @@ class Simulation {
     renderStore() {
         for (let i = 0; i < this.store.blocked.length; i++) {
             for (let j = 0; j < this.store.blocked[i].length; j++) {
-            if (this.store.blocked[i][j] == 1) {
-            this.graphics2.beginFill(0xff00ff);
-            this.graphics2.drawRect(this.scale * i, this.scale * j, this.scale, this.scale);
-            this.graphics2.endFill();
+                if (this.store.blocked[i][j] == 1) {
+                this.graphics2.beginFill(0xff00ff);
+                this.graphics2.drawRect(this.scale * i, this.scale * j, this.scale, this.scale);
+                this.graphics2.endFill();
             }
         }
         }
@@ -115,7 +122,12 @@ class Simulation {
         console.log("render called")
         this.graphics.clear();
         for (let c = 0; c < this.customers.length; c++) {
-            this.graphics.beginFill(0xDE3249);
+            if (this.customers[c].infected > 0) {
+                this.graphics.beginFill(0xDE3249);
+            } else {
+                this.graphics.beginFill(0xFFFF00);
+            }
+            //this.graphics.beginFill(0xDE3249);
             this.graphics.drawRect(this.scale * parseInt(this.customers[c].x), this.scale * parseInt(this.customers[c].y), this.scale, this.scale);
             this.graphics.endFill();
         }
