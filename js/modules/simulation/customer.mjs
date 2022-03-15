@@ -1,4 +1,4 @@
-import {params, randRange, checkCoordIn2DArray} from './util.mjs'
+import {permuteArray, params, randRange, checkCoordIn2DArray} from './util.mjs'
 
 const DIRECTIONS = [[-1, 0], [0, 1], [1, 0], [0, -1]];
 
@@ -122,8 +122,9 @@ class Customer {
 
     takeRandomStep(store) {
         // TODO actually need to permute directions
-        for (let i = 0; i < DIRECTIONS.length; i++) {
-            let step = DIRECTIONS[i];
+        let permDir = permuteArray(DIRECTIONS);
+        for (let i = 0; i < permDir.length; i++) {
+            let step = permDir[i];
             let tmpPos = [parseInt(this.x) + parseInt(step[0]), parseInt(this.y) + parseInt(step[1])];
             console.log("tmppos: " + tmpPos);
             if (tmpPos[0] < 0 || tmpPos[0] >= store.Lx || tmpPos[1] < 0 || tmpPos[1] >= store.Ly) {
@@ -159,7 +160,7 @@ class Customer {
 
 class SmartCustomer extends Customer {
     constructor(x, y, infected, probSpreadPlume = params.PROBSPREADPLUME) {
-        super(x, y, infected, probSpreadPlume = params.PROBSPREADPLUME);
+        super(x, y, infected, probSpreadPlume);
     }
 
     takeStep(store) {
@@ -177,7 +178,7 @@ class SmartCustomer extends Customer {
             }
         }
 
-        if (this.infected) 
+        if (this.infected == 1) 
             this.spreadViralPlumes(store);
 
         // TODO make sure this is correct
@@ -209,7 +210,7 @@ class SmartCustomer extends Customer {
             return itemPos;
         }
 
-        if (this.path == null || !(this.path.length > 0)) {
+        if (this.path == null || this.path.length == 0) {
             this.updateFirstTarget(store);
             let startInd = store.getIndexFromCoord([this.x, this.y]);
             let targetInd = store.getIndexFromCoord(this.shoppingList[0]);
@@ -229,7 +230,7 @@ class SmartCustomer extends Customer {
 
         let step = store.getCoordFromIndex(this.path[0]);
         // check that step is possible
-        if (!store.blocked[step[0]][step[1]]) {
+        if (store.blocked[step[0]][step[1]] == 0) {
             store.blocked[this.x][this.y] = 0;
             this.x = step[0];
             this.y = step[1];
@@ -243,7 +244,7 @@ class SmartCustomer extends Customer {
             // sanity check for sims with small environments
             store.createStaticGraph();
             this.path = null;
-        } else if ((this.headingForExit > 0 && Math.random() < params.BLOCKRANDOMSTEP) || Math.random() < params.BLOCKRANDOMSTEP * 1e-2) {
+        } else if ((this.headingForExit == 0 && Math.random() < params.BLOCKRANDOMSTEP) || Math.random() < params.BLOCKRANDOMSTEP * 1e-2) {
             this.takeRandomStep(store);
             this.path = null;
         }
