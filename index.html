@@ -26,7 +26,7 @@
             </div>
             <div class="col-sm">
                 <div class="column">
-                    <form id="myForm" name="myForm" onsubmit="return false">
+                    <form id="myForm" name="myForm">
                         <div class="form-group row">
                             <label for="prob_cust" class="col-sm-3 col-form-label">Probability of new Customer</label>
                             <div class="col-sm-3">
@@ -64,7 +64,7 @@
                         
                         <div class="form-group row">
                             <div class="col-sm-2">
-                              <button type="submit" class="btn btn-primary" onclick="Run()">Run Simulation</button>
+                              <button type="button" class="btn btn-primary" onclick="Run()">Run Simulation</button>
                             </div>
                         </div>
                     </form>
@@ -81,7 +81,11 @@
         /** Hier moet dus nog de simulatie bij komen */
         let myForm = document.getElementById("myForm");
         let formData = new FormData(myForm);
-        document.getElementById("yourOutputDiv").innerHTML = formData.get('prob_cust');
+        if (formData.get('prob_cust') > 1 || formData.get('prob_cust') < 0) {
+            alert("Error");
+        } else {
+            document.getElementById("yourOutputDiv").innerHTML = formData.get('prob_cust');
+        }
     }
 </script>
 </html>
