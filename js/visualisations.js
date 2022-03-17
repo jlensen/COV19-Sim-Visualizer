@@ -5,10 +5,10 @@ console.log(ctx);
 const myChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: ['8:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
         datasets: [{
             fill: true,
-            label: '# of Votes',
+            label: 'Infections over time',
             data: [12, 19, 3, 5, 2, 3],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
