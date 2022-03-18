@@ -64,9 +64,16 @@
       </div>
 </body>
 <footer>
-    <canvas id="vis" width="800" height="500"></canvas>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    <script type="module" src="./js/visualisations.js"></script>
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width:40vw">
+        <canvas id="vis" width="800" height="500"></canvas>
+        <script type="module" src="./js/visualisations.js"></script>
+
+        <div class="chart-container" style="position: relative; float: left; height:40vh; width:40vw">
+            <canvas id="vis2" width="800" height="500"></canvas>
+        </div>
+    </div>
+
 <!--<script>
     function Save() {
         var results = document.getElementById("parameter1").value
