@@ -7,7 +7,6 @@ class Customer {
     constructor(x, y, infected, probSpreadPlume = params.PROBSPREADPLUME) {
         this.x = x;
         this.y = y;
-        console.log("constructorinf: " + infected)
         this.infected = infected;
         this.shoppingList = [];
         this.path = null;
