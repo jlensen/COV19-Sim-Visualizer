@@ -18,12 +18,14 @@ function startsim() {
         this[0].ticker.destroy();
     }
     //this.hasEnded = true;
-    let customer = document.getElementById("parameter1").value;
-    let shelves = document.getElementById("parameter2").value;
-    let infrate = document.getElementById("parameter3").value
-    this[0] = new Simulation(0, 20,20, shelves, customer, 0.1, infrate, 20, 1000, false, 1.0, true, this[1], 15);
-    //this.nCustomers = document.getElementById("parameter2").value
-    this[0].renderStore()
+    let n_cust = document.getElementById("n_cust").value;
+    let cust_rate = document.getElementById("cust_rate").value;
+    let inf_rate = document.getElementById("inf_rate").value;
+    let n_shelves = document.getElementById("n_shelves").value;
+    let n_steps = document.getElementById("n_steps").value;
+    let scale = 1.0;
+    this[0] = new Simulation(0, 20, 20, n_shelves, n_cust, cust_rate, inf_rate, 20, n_steps, false, scale, true, this[1], 15);
+    this[0].renderStore();
     this[0].startSim();
     //this.hasEnded = false;
     //this.runSimulation();

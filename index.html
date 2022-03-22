@@ -14,33 +14,40 @@
 
 <body>
     <div class="jumbotron">
-        <h1 class="display-4">Covid Sim</h1>
-        <!--<p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>-->
+        <h1 class="display-4">COVID-19 Supermarket Simulator</h1>
+        <p class="lead">Fill in the fields on the right and press 'Simulate' to view the simulation.</p>
         <hr class="my-4">
         <div class="row">
-            <div class="col-sm" id="sim">
-                <!-- For now we load the simulation page code here to test, later should be its own 
-                page probably-->
-                <script type="module" src="./js/simpage.js"></script>
-            </div>
             <div class="col-sm">
                 <div class="column">
                         <div class="form-group row">
-                            <label for="parameter1" class="col-sm-2 col-form-label">nCustomers</label>
-                            <div class="col-sm-10">
-                                <input type="parameter1" class="form-control" id="parameter1" placeholder="50" value="50">
+                            <label for="n_cust" class="col-sm-3 col-form-label">Number of Customers</label>
+                            <div class="col-sm-3">
+                                <input type="n_cust" class="form-control" id="n_cust" placeholder="50" value="50">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="parameter2" class="col-sm-2 col-form-label">Shelves</label>
-                            <div class="col-sm-10">
-                                <input type="parameter2" class="form-control" id="parameter2" placeholder="10" value="10">
+                            <label for="cust_rate" class="col-sm-3 col-form-label">Customer Rate</label>
+                            <div class="col-sm-3">
+                                <input type="cust_rate" class="form-control" id="cust_rate" placeholder="0.1" value="0.1">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="parameter2" class="col-sm-2 col-form-label">Infection Rate</label>
-                            <div class="col-sm-10">
-                                <input type="parameter2" class="form-control" id="parameter3" placeholder="0.5" value="0.5">
+                            <label for="inf_rate" class="col-sm-3 col-form-label">Infection Rate</label>
+                            <div class="col-sm-3">
+                                <input type="inf_rate" class="form-control" id="inf_rate" placeholder="0.05" value="0.05">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="n_shelves" class="col-sm-3 col-form-label">Number of Shelves</label>
+                            <div class="col-sm-3">
+                                <input type="n_shelves" class="form-control" id="n_shelves" placeholder="10" value="10">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="n_steps" class="col-sm-3 col-form-label">Number of Steps</label>
+                            <div class="col-sm-3">
+                                <input type="n_steps" class="form-control" id="n_steps" placeholder="1000" value="1000">
                             </div>
                         </div>
                         <!--<div class="form-group row">
@@ -54,11 +61,16 @@
                         </div>-->
                         <div class="form-group row">
                             <div class="col-sm-10">
-                              <button id="loadbtn" class="btn btn-primary">Use parameters</button>
+                              <button id="loadbtn" class="btn btn-primary">Simulate</button>
                               <button id="stopbtn" class="btn btn-primary">Stop</button>
                             </div>
                         </div>
                 </div>
+            </div>
+            <div class="col-sm" id="sim">
+                <!-- For now we load the simulation page code here to test, later should be its own 
+                page probably-->
+                <script type="module" src="./js/simpage.js"></script>
             </div>
         </div>
       </div>
