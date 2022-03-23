@@ -54,10 +54,45 @@ class Store {
         this.storeWideExposure = 0;
     }
 
-    // TODO fix this. A lot of slicing involved. Only really for infection
-    // get general sim working first
+    // TODO check this, exposure seems to be high
     updateDiffusion() {
         this.plumesNew = [...this.plumes];
+
+        // TODO lots of loops, maybe we can cimbine some of them?
+        for (let i = 1; i < this.plumesNew.length; i++) {
+            for (let j = 0; j < this.plumesNew[i].length; j++) {
+                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i-1][j] * this.dt * (this.plumes[i-1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF;
+            }
+        }
+
+        for (let i = 0; i < this.plumesNew.length - 1; i++) {
+            for (let j = 0; j < this.plumesNew[i].length; j++) {
+                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i+1][j] * this.dt * (this.plumes[i+1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF;
+            }
+        }
+
+        for (let i = 0; i < this.plumesNew.length; i++) {
+            for (let j = 1; j < this.plumesNew[i].length; j++) {
+                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i][j-1] * this.dt * (this.plumes[i][j-1] - this.plumes[i][j])/Math.pow(this.dy, 2) / params.DIFFCOEFF;
+            }
+        }
+
+        for (let i = 0; i < this.plumesNew.length; i++) {
+            for (let j = 0; j < this.plumesNew[i].length - 1; j++) {
+                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i][j+1] * this.dt * (this.plumes[i][j+1] - this.plumes[i][j])/Math.pow(this.dy, 2) / params.DIFFCOEFF;
+            }
+        }
+
+        for (let i = 0; i < this.plumesNew.length; i++) {
+            for (let j = 0; j < this.plumesNew[i].length; j++) {
+                this.plumesNew[i][j] -= this.ACSinkCoeff[i][j] * this.dt * this.plumes[i][j];
+                if (this.plumesNew[i][j] < 0)
+                    this.plumesNew[i][j] = 0;
+                this.plumesIntegrated[i][j] += this.plumesNew[i][j]
+            }
+        }
+
+        this.plumes = this.plumesNew;
     }
 
     addPlume(plumeDuration) {
@@ -248,7 +283,7 @@ class Store {
 
 // Just a simple graph implementation for now
 // let's make it undirected for now, so we can only create square stores for now
-// TODO make it more flexible
+// TODO Sometimes errors in pathfinding, although the problem may be in the simulation itself
 class Graph {
     constructor(n) {
         this.edges = new Array(n);

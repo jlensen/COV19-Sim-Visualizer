@@ -223,7 +223,6 @@ class Simulation {
                 if (e > 0)
                     this.store.plumes[i] -= 1;
             });
-            this.store.plumes[this.store.plumes > 0] -= 1;
             if (this.nCustomers > 0 && Math.random() < this.probNewCustomer)
                 this.newCustomer();
         } else if (this.updatePlumes && this.useDiffusion) {

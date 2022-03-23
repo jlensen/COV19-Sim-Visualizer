@@ -152,15 +152,15 @@ class SmartCustomer extends Customer {
 
     takeStep(store) {
         this.timeInStore += 1;
-        if (store.plumes[this.x][this.y] == 1 && !store.useDiffusion) {
+        if (store.plumes[this.x][this.y] > 0 && !store.useDiffusion) {
             this.exposure += 1;
-        } else if (store.plumes[this.x][this.y] == 1 && store.useDiffusion) {
+        } else if (store.plumes[this.x][this.y] > 0 && store.useDiffusion) {
             this.exposure += store.plumes[this.x][this.y] * store.dt;
-            if (!this.infected)
+            if (this.infected == 0)
                 store.storeWideExposure += store.plumes[this.x][this.y] * store.dt;
             if (store.plumes[this.x][this.y] > 0) {
                 this.exposureTime += 1;
-                if (store.plumes[self.x][self.y] > params.EXPOSURELIMIT) 
+                if (store.plumes[this.x][this.y] > params.EXPOSURELIMIT) 
                     this.exposureTimeThres += 1;
             }
         }
