@@ -253,21 +253,21 @@ class Graph {
     constructor(n) {
         this.edges = new Array(n);
         for (let i = 0; i < this.edges.length; i++) {
-            this.edges[i] = new Array(n).fill(false);
+            this.edges[i] = new Array();
         }
     }
 
     addEdge(source, target) {
-        if (this.edges[source][target]) {
+        if (this.edges[source].includes(target)) {
             return;
         }
-        this.edges[source][target] = true;
+        this.edges[source].push(target);
         // adding reverse gives problems, but if we always search from low to high it shouldn't give problems
-        this.edges[target][source] = true;
+        this.edges[target].push(source);
     }
 
     areConnected(a, b) {
-        return this.edges[a][b];
+        return this.edges[a].includes(b);
     }
 
     shortestPath(source, target) {
@@ -285,15 +285,12 @@ class Graph {
             currentNode = queue.shift();
             visited[currentNode] = true;
             for (let i = 0; i < this.edges[currentNode].length; i++) {
-                if (!this.edges[currentNode][i]) {
-                    continue;
-                }
-                if (!visited[i]) {
-                    visited[i] = true;
-                    queue.push(i);
-                    pred[i] = currentNode;
+                if (!visited[this.edges[currentNode][i]]) {
+                    visited[this.edges[currentNode][i]] = true;
+                    queue.push(this.edges[currentNode][i]);
+                    pred[this.edges[currentNode][i]] = currentNode;
 
-                    if (i == target) {
+                    if (this.edges[currentNode][i] == target) {
                         queue = [];
                         break;
                     }
