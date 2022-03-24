@@ -64,16 +64,23 @@
       </div>
 </body>
 <footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <div class="chart-container" style="position: relative; float: left; height:40vh; width:40vw">
         <canvas id="vis" width="800" height="500"></canvas>
         <script type="module" src="./js/visualisations.js"></script>
-
-        <div class="chart-container" style="position: relative; float: left; height:40vh; width:40vw">
-            <canvas id="vis2" width="800" height="500"></canvas>
-        </div>
     </div>
-
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width:40vw">
+            <canvas id="vis2" width="800" height="500"></canvas>
+    </div>
+    <div id="chartDiv" style="max-width: 540px;height: 500px;margin: 0px auto">
+        
+    </div>
+    <!--<script type="text/javascript" src="http://www.patrick-wied.at/static/heatmapjs/src/heatmap.js"></script> -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <div id="heatmapDiv" style="position: relative; float: left; height:60vh; width:60vw">
+        <script type="module" src="./js/heatmap.js"></script>
+    </div>
 <!--<script>
     function Save() {
         var results = document.getElementById("parameter1").value

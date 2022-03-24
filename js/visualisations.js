@@ -1,4 +1,4 @@
-//const {Chart} = require('chart.js');
+//const {Chart} = require('chart.js'); //already done in hmtl
 const ctx = document.getElementById('vis').getContext('2d');
 const ctx2 = document.getElementById('vis2').getContext('2d');
 const myChart = new Chart(ctx, {
@@ -30,6 +30,10 @@ const myChart = new Chart(ctx, {
     },
     options: {
         responsive: true,
+        events: ['click'],
+        interaction: {
+            mode: 'nearest'
+        },
         scales: {
             y: {
                 beginAtZero: true
@@ -67,6 +71,7 @@ const myChart2 = new Chart(ctx2, {
     },
     options: {
         responsive: true,
+        events: ['click'],
         scales: {
             y: {
                 beginAtZero: true
