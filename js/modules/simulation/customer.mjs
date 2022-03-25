@@ -46,10 +46,8 @@ class Customer {
             // can throw error if we want
         } else {
             // add specified item at the beginning and remove value at its original position
-            // TODO check this
             this.shoppingList.splice(0, 0, this.shoppingList[shortInd]);
             this.shoppingList.splice(shortInd + 1, 1);
-            //this.shoppingList.unshift(this.shoppingList.splice(shortInd, 1)[0]);
         }
     }
 
@@ -84,14 +82,10 @@ class Customer {
             let tx = randRange(0, store.Lx);
             // from 1 so customers don't run into other customers visiting cashiers
             let ty = randRange(1, store.Ly);
-            // TODO expand this while loop check, see how to do it in javascript
             while (store.blocked[tx][ty] == 1 || checkCoordIn2DArray(tx, ty, this.shoppingList) || checkCoordIn2DArray(tx, ty, store.exit)
             || (store.entrance[0] == tx && store.entrance[1] == ty) || (tx < 1 || ty < 1) || (tx < 3 && ty < 3) ||
             !(store.blockedShelves[tx][ty - 1] == 1 || (ty + 1 < store.Ly && store.blockedShelves[tx][ty + 1] == 1) ||
             (tx - 1 >= 0 || store.blockedShelves[tx - 1][ty] == 1) || (tx + 1 < store.Lx && (store.blockedShelves[tx + 1][ty] == 1 && store.blockedShelves[tx + 1][ty] != undefined)))) {
-                //console.log(!(store.blockedShelves[tx][ty - 1] == 1 || (ty + 1 < store.Ly && store.blockedShelves[tx][ty + 1] == 1) ||
-                //store.blockedShelves[tx - 1][ty] == 1 || (tx + 1 < store.Lx && store.blockedShelves[tx + 1][ty] == 1)))
-                //console.log(store.blockedShelves[tx-1][ty])
                 store.blocked[tx][ty] == 1
                 tx = randRange(0, store.Lx);
                 ty = randRange(1, store.Ly);
@@ -109,7 +103,6 @@ class Customer {
     }
 
     takeRandomStep(store) {
-        // TODO actually need to permute directions
         let permDir = permuteArray(DIRECTIONS);
         for (let i = 0; i < permDir.length; i++) {
             let step = permDir[i];
@@ -136,12 +129,6 @@ class Customer {
             }
             return false;
         }
-        //store.exit.forEach((s) => {
-        //    if (this.x == s[0] && this.y == s[1]) {
-        //        return true;
-        //    }
-        //    return false;
-        //})
     }
 }
 

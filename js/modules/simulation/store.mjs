@@ -44,12 +44,6 @@ class Store {
         this.storeWideExposure = 0;
     }
 
-    // TODO
-    // Think about how our system for the store is actually going to work
-    // how precise do we want it to be... Do we use a grid system for the shelves or a more free
-    // way of placing the shelves. Will impact the computations.
-    // Of course the functionality for randomly placing doors and such we don't really need right now
-
     initializeExposureDuringTimeStep() {
         this.storeWideExposure = 0;
     }
@@ -58,7 +52,7 @@ class Store {
     updateDiffusion() {
         this.plumesNew = [...this.plumes];
 
-        // TODO lots of loops, maybe we can cimbine some of them?
+        // TODO lots of loops, maybe we can combine some of them?
         for (let i = 1; i < this.plumesNew.length; i++) {
             for (let j = 0; j < this.plumesNew[i].length; j++) {
                 this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i-1][j] * this.dt * (this.plumes[i-1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF;
@@ -86,7 +80,7 @@ class Store {
         for (let i = 0; i < this.plumesNew.length; i++) {
             for (let j = 0; j < this.plumesNew[i].length; j++) {
                 this.plumesNew[i][j] -= this.ACSinkCoeff[i][j] * this.dt * this.plumes[i][j];
-                if (this.plumesNew[i][j] < 0)
+                if (this.plumesNew[i][j] < params.PLUMEMIN)
                     this.plumesNew[i][j] = 0;
                 this.plumesIntegrated[i][j] += this.plumesNew[i][j]
             }
@@ -98,7 +92,7 @@ class Store {
     addPlume(plumeDuration) {
         let plumePosx = randRange(1, this.Lx - 1);
         let plumePosy = randRange(1, thi.Ly - 1);
-        while (this.blocked[plumePosx][plumePosy] == 1 || this.plumes[plumePosx][plumePosy] == 1) {
+        while (this.blocked[plumePosx][plumePosy] == 1 || this.plumes[plumePosx][plumePosy] > 0) {
             plumePosx = randRange(1, this.Lx - 1);
             plumePosy = randRange(1, thi.Ly - 1);
         }
@@ -155,19 +149,6 @@ class Store {
 		this.graph = new Graph(totNodes);
         let blockedNodesList = [].concat.apply([], this.blocked);
 
-        // connect all non-blocked spaces along x and y axis
-        /*for (let i = 0; i < this.Ly; i++) {
-            for (let j = 0; j < this.Lx; j++) {
-                // connect along x
-                if (this.blocked[j][i]==0 && this.blocked[j+1][i] == 0 && this.graph.areConnected(i * this.Lx + j,i * this.Lx + j + 1) == false) {
-					this.graph.addEdge(i * this.Lx + j, i * this.Lx + j + 1);
-                }
-                // connect along y
-                if (this.blocked[j][i]==0 && this.blocked[j][i + 1] == 0 && this.graph.areConnected(i * this.Lx + j,(i+1) * this.Lx + j) == false) {
-                    this.graph.addEdge(i * this.Lx + j,(i+1) * this.Lx + j);
-                }
-            }
-        }*/
         for (let i = 0; i < totNodes; i++) {
             if (blockedNodesList[i]==0 && blockedNodesList[i+1] == 0 && this.graph.areConnected(i,i + 1) == false && i + 1 % this.Lx != 0) {
                 this.graph.addEdge(i, i + 1);

@@ -160,8 +160,10 @@ class Simulation {
     }
 
     stopSim() {
-        this.ticker.stop();
-        this.ticker.destroy();
+        if (this.ticker != undefined) {
+            this.ticker.stop();
+            this.ticker.destroy();
+        }
         this.ticker = new Ticker();
     }
 
