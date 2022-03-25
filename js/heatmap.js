@@ -1,14 +1,14 @@
 // code to shuffle array for mockup data
 
-var z0 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
-var z1 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
-var z2 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
-var z3 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
-var z4 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
-var z5 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
-var z6 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
-var z7 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
-var z8 = new Array(40).fill().map((a, i) => a = i).sort(() => Math.random());
+var z0 = new Array(9).fill().map(() => Math.random());
+var z1 = new Array(9).fill().map(() => Math.random());
+var z2 = new Array(9).fill().map(() => Math.random());
+var z3 = new Array(9).fill().map(() => Math.random());
+var z4 = new Array(9).fill().map(() => Math.random());
+var z5 = new Array(9).fill().map(() => Math.random());
+var z6 = new Array(9).fill().map(() => Math.random());
+var z7 = new Array(9).fill().map(() => Math.random());
+var z8 = new Array(9).fill().map(() => Math.random());
 
 
 
