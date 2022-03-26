@@ -44,26 +44,55 @@ class Store {
         this.storeWideExposure = 0;
     }
 
-    // TODO
-    // Think about how our system for the store is actually going to work
-    // how precise do we want it to be... Do we use a grid system for the shelves or a more free
-    // way of placing the shelves. Will impact the computations.
-    // Of course the functionality for randomly placing doors and such we don't really need right now
-
     initializeExposureDuringTimeStep() {
         this.storeWideExposure = 0;
     }
 
-    // TODO fix this. A lot of slicing involved. Only really for infection
-    // get general sim working first
+    // TODO check this, exposure seems to be high
     updateDiffusion() {
         this.plumesNew = [...this.plumes];
+
+        // TODO lots of loops, maybe we can combine some of them?
+        for (let i = 1; i < this.plumesNew.length; i++) {
+            for (let j = 0; j < this.plumesNew[i].length; j++) {
+                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i-1][j] * this.dt * (this.plumes[i-1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF;
+            }
+        }
+
+        for (let i = 0; i < this.plumesNew.length - 1; i++) {
+            for (let j = 0; j < this.plumesNew[i].length; j++) {
+                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i+1][j] * this.dt * (this.plumes[i+1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF;
+            }
+        }
+
+        for (let i = 0; i < this.plumesNew.length; i++) {
+            for (let j = 1; j < this.plumesNew[i].length; j++) {
+                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i][j-1] * this.dt * (this.plumes[i][j-1] - this.plumes[i][j])/Math.pow(this.dy, 2) / params.DIFFCOEFF;
+            }
+        }
+
+        for (let i = 0; i < this.plumesNew.length; i++) {
+            for (let j = 0; j < this.plumesNew[i].length - 1; j++) {
+                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i][j+1] * this.dt * (this.plumes[i][j+1] - this.plumes[i][j])/Math.pow(this.dy, 2) / params.DIFFCOEFF;
+            }
+        }
+
+        for (let i = 0; i < this.plumesNew.length; i++) {
+            for (let j = 0; j < this.plumesNew[i].length; j++) {
+                this.plumesNew[i][j] -= this.ACSinkCoeff[i][j] * this.dt * this.plumes[i][j];
+                if (this.plumesNew[i][j] < params.PLUMEMIN)
+                    this.plumesNew[i][j] = 0;
+                this.plumesIntegrated[i][j] += this.plumesNew[i][j]
+            }
+        }
+
+        this.plumes = this.plumesNew;
     }
 
     addPlume(plumeDuration) {
         let plumePosx = randRange(1, this.Lx - 1);
         let plumePosy = randRange(1, thi.Ly - 1);
-        while (this.blocked[plumePosx][plumePosy] == 1 || this.plumes[plumePosx][plumePosy] == 1) {
+        while (this.blocked[plumePosx][plumePosy] == 1 || this.plumes[plumePosx][plumePosy] > 0) {
             plumePosx = randRange(1, this.Lx - 1);
             plumePosy = randRange(1, thi.Ly - 1);
         }
@@ -120,19 +149,6 @@ class Store {
 		this.graph = new Graph(totNodes);
         let blockedNodesList = [].concat.apply([], this.blocked);
 
-        // connect all non-blocked spaces along x and y axis
-        /*for (let i = 0; i < this.Ly; i++) {
-            for (let j = 0; j < this.Lx; j++) {
-                // connect along x
-                if (this.blocked[j][i]==0 && this.blocked[j+1][i] == 0 && this.graph.areConnected(i * this.Lx + j,i * this.Lx + j + 1) == false) {
-					this.graph.addEdge(i * this.Lx + j, i * this.Lx + j + 1);
-                }
-                // connect along y
-                if (this.blocked[j][i]==0 && this.blocked[j][i + 1] == 0 && this.graph.areConnected(i * this.Lx + j,(i+1) * this.Lx + j) == false) {
-                    this.graph.addEdge(i * this.Lx + j,(i+1) * this.Lx + j);
-                }
-            }
-        }*/
         for (let i = 0; i < totNodes; i++) {
             if (blockedNodesList[i]==0 && blockedNodesList[i+1] == 0 && this.graph.areConnected(i,i + 1) == false && i + 1 % this.Lx != 0) {
                 this.graph.addEdge(i, i + 1);
@@ -248,26 +264,26 @@ class Store {
 
 // Just a simple graph implementation for now
 // let's make it undirected for now, so we can only create square stores for now
-// TODO make it more flexible
+// TODO Sometimes errors in pathfinding, although the problem may be in the simulation itself
 class Graph {
     constructor(n) {
         this.edges = new Array(n);
         for (let i = 0; i < this.edges.length; i++) {
-            this.edges[i] = new Array(n).fill(false);
+            this.edges[i] = new Array();
         }
     }
 
     addEdge(source, target) {
-        if (this.edges[source][target]) {
+        if (this.edges[source].includes(target)) {
             return;
         }
-        this.edges[source][target] = true;
+        this.edges[source].push(target);
         // adding reverse gives problems, but if we always search from low to high it shouldn't give problems
-        this.edges[target][source] = true;
+        this.edges[target].push(source);
     }
 
     areConnected(a, b) {
-        return this.edges[a][b];
+        return this.edges[a].includes(b);
     }
 
     shortestPath(source, target) {
@@ -285,15 +301,12 @@ class Graph {
             currentNode = queue.shift();
             visited[currentNode] = true;
             for (let i = 0; i < this.edges[currentNode].length; i++) {
-                if (!this.edges[currentNode][i]) {
-                    continue;
-                }
-                if (!visited[i]) {
-                    visited[i] = true;
-                    queue.push(i);
-                    pred[i] = currentNode;
+                if (!visited[this.edges[currentNode][i]]) {
+                    visited[this.edges[currentNode][i]] = true;
+                    queue.push(this.edges[currentNode][i]);
+                    pred[this.edges[currentNode][i]] = currentNode;
 
-                    if (i == target) {
+                    if (this.edges[currentNode][i] == target) {
                         queue = [];
                         break;
                     }
