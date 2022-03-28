@@ -1,15 +1,33 @@
-import { Container, Graphics } from '../pixi/pixi.mjs';
+import { Container, Graphics, Rectangle } from '../pixi/pixi.mjs';
 
 class Editor {
-    constructor(app) {
+    constructor(app, scale) {
         this.grid = null;
+        this.scale = scale;
         this.app = app;
         this.stage = new Container();
-        this.graphics = new Graphics();
-        this.graphics.interactive = true;
-        this.graphics.on("pointerdown", this.handleClick.bind(this));
-        this.stage.addChild(this.graphics);
+ 
+        // Holds objects that are draw such as shelves, exits
+        this.objects = new Graphics();
+        this.objects.interactive = true;
+        this.objects.on("mousedown", this.handleClick.bind(this));
+        this.objects.on("mousemove", this.handleDrag.bind(this));
+        this.objects.on("mouseup", this.handleRelease.bind(this));
+        this.objects.hitArea = new Rectangle(0, 0, 300, 300);
+
+        // Holds background pattern
+        this.background = new Graphics();
+        this.background.interactive = false;
+
+        this.stage.addChild(this.background);
+        this.stage.addChild(this.objects);
         this.app.render(this.stage);
+
+        this.dragging = false;
+
+        // The current selected object to place
+        // 0 is eraser
+        this.selected = 1;
     }
 
     setStoresize(x, y) {
@@ -20,39 +38,60 @@ class Editor {
     }
 
     init() {
+        let colorChange;
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {
-                this.graphics.beginFill(0x1c1f1d);
-                this.graphics.drawRect(3 * i, 3 * j, 3, 3);
-                this.graphics.endFill();
+                colorChange = j % 2 == 0;
+                if (i % 2 == 0) 
+                    colorChange = !colorChange;
+                if (colorChange) {
+                    this.background.beginFill(0xadadac);
+                } else {
+                    this.background.beginFill(0xdbdbdb);
+                }
+                //this.background.beginFill(0x1c1f1d);
+                this.background.drawRect(this.scale * i, this.scale * j, this.scale, this.scale);
+                this.background.endFill();
             }
         }
         this.app.render(this.stage);
     }
 
     render() {
+        this.objects.clear();
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {
                 if (this.grid[i][j] == 1) {
-                    this.graphics.beginFill(0xff69b4);
+                    this.objects.beginFill(0xff69b4);
                 } else {
-                    this.graphics.beginFill(0x1c1f1d);
+                    continue;
                 }
                 //this.graphics.beginFill(0x1c1f1d);
-                this.graphics.drawRect(3 * i, 3 * j, 3, 3);
-                this.graphics.endFill();
+                this.objects.drawRect(this.scale * i, this.scale * j, this.scale, this.scale);
+                this.objects.endFill();
             }
         }
         this.app.render(this.stage);
     }
 
     handleClick(event) {
-        console.log(event.data.global.x, event.data.global.y);
-        let x = Math.round(event.data.global.x / 3);
-        let y = Math.round(event.data.global.y / 3);
-        console.log(x, y);
-        this.grid[x][y] = 1;
+        // set dragging to true, so if we move the mouse handleDRag will know we can still draw
+        this.dragging = true;
+        let x = Math.floor(event.data.global.x / this.scale);
+        let y = Math.floor(event.data.global.y / this.scale);
+        this.grid[x][y] = this.selected;
         this.render();
+    }
+
+    handleDrag(event) {
+        // if dragging we can just place objects
+        if (this.dragging) {
+            this.handleClick(event);
+        }
+    }
+
+    handleRelease() {
+        this.dragging = false;
     }
 }
 
