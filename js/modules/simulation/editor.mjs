@@ -6,24 +6,33 @@ class Editor {
         this.scale = scale;
         this.app = app;
         this.stage = new Container();
- 
+        this.stage.interactive = true;
+        this.stage.on("pointerdown", this.handleMoveClick.bind(this));
+        this.stage.on("pointermove", this.handleMoveDrag.bind(this));
+        this.stage.on("pointerup", this.handleMoveRelease.bind(this));
+        this.stage.hitArea = new Rectangle(0, 0, this.app.width, this.app.height);
+
         // Holds objects that are draw such as shelves, exits
         this.objects = new Graphics();
         this.objects.interactive = true;
-        this.objects.on("mousedown", this.handleClick.bind(this));
-        this.objects.on("mousemove", this.handleDrag.bind(this));
-        this.objects.on("mouseup", this.handleRelease.bind(this));
-        this.objects.hitArea = new Rectangle(0, 0, 300, 300);
+        this.objects.on("pointerdown", this.handleDrawClick.bind(this));
+        this.objects.on("pointermove", this.handleDrawDrag.bind(this));
+        this.objects.on("pointerup", this.handleDrawRelease.bind(this));
+        this.objects.hitArea = new Rectangle(0, 0, this.app.width, this.app.height);
 
         // Holds background pattern
         this.background = new Graphics();
         this.background.interactive = false;
 
-        this.stage.addChild(this.background);
-        this.stage.addChild(this.objects);
+        this.editorContents = new Container();
+
+        this.editorContents.addChild(this.background);
+        this.editorContents.addChild(this.objects);
+        this.stage.addChild(this.editorContents);
         this.app.render(this.stage);
 
-        this.dragging = false;
+        this.drawDrag = false;
+        this.moveDrag = false;
 
         // The current selected object to place
         // 0 is eraser
@@ -74,24 +83,59 @@ class Editor {
         this.app.render(this.stage);
     }
 
-    handleClick(event) {
+    handleDrawClick(event) {
         // set dragging to true, so if we move the mouse handleDRag will know we can still draw
-        this.dragging = true;
-        let x = Math.floor(event.data.global.x / this.scale);
-        let y = Math.floor(event.data.global.y / this.scale);
+        console.log("wat")
+        if (event.data.button == 0) {
+        this.drawDrag = true;
+        let pos = event.data.getLocalPosition(this.objects);
+        let x = Math.floor(pos.x / this.scale);
+        let y = Math.floor(pos.y / this.scale);
         this.grid[x][y] = this.selected;
         this.render();
-    }
-
-    handleDrag(event) {
-        // if dragging we can just place objects
-        if (this.dragging) {
-            this.handleClick(event);
         }
     }
 
-    handleRelease() {
-        this.dragging = false;
+    handleDrawDrag(event) {
+        // if dragging we can just place objects
+        if (this.drawDrag) {
+            //this.handleDrawClick(event);
+            let pos = event.data.getLocalPosition(this.objects);
+        let x = Math.floor(pos.x / this.scale);
+        let y = Math.floor(pos.y / this.scale);
+        this.grid[x][y] = this.selected;
+        this.render();
+        }
+    }
+
+    handleDrawRelease() {
+        this.drawDrag = false;
+    }
+
+    handleMoveClick(event) {
+        if (event.data.button == 2)
+            this.moveDrag = true;
+    }
+
+    handleMoveDrag(event) {
+        if (this.moveDrag) {
+            this.editorContents.position.x += event.data.originalEvent.movementX;
+            this.editorContents.position.y += event.data.originalEvent.movementY;
+            this.render();
+        }
+    }
+
+    handleMoveRelease() {
+        this.moveDrag = false;
+    }
+
+    // zooms in the given direction. True for in and false for out
+    zoom(direction) {
+        // TODO scaling amount needs to be determined sometime
+        let amount = direction ? 2 : 0.5;
+        this.editorContents.scale.x *= amount;
+        this.editorContents.scale.y *= amount;
+        this.render();
     }
 }
 
