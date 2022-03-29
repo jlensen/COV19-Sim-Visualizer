@@ -12,7 +12,7 @@ var z8 = new Array(9).fill().map(() => Math.random());
 
 
 
-console.log(z0);
+//console.log(z0);
 
 var xValues = ['A', 'B', 'C', 'D', 'E'];
 
