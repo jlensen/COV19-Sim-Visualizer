@@ -24,7 +24,6 @@ const lineChart1 = new Chart(ctx, {
             ],
             borderColor: [
                 'rgba(255, 99, 132, 1)',
-
             ],
             borderWidth: 1
         }]
@@ -63,14 +62,19 @@ const lineChart2 = new Chart(ctx2, {
             ],
             borderColor: [
                 'rgba(99, 255, 132, 1)',
-
             ],
             borderWidth: 1
         }]
     },
     options: {
         responsive: true,
-        events: ['click'],
+        onClick: (e) => {
+          const canvasPosition = Chart.helpers.getRelativePosition(e, lineChart1);
+          const dataX = lineChart1.scales.x.getValueForPixel(canvasPosition.x);
+          //zoom both graphs
+          zoomIn(lineChart1, dataX, dataX + 10);
+          zoomIn(lineChart2, dataX, dataX + 10);
+        },
         scales: {
             y: {
                 beginAtZero: true
@@ -79,7 +83,7 @@ const lineChart2 = new Chart(ctx2, {
     }
 });
 
-function resetGraphs() {
+function reset() {
       lineChart1.options.scales.x.min = 0;
       lineChart1.options.scales.x.max = 47;
       lineChart1.update();
