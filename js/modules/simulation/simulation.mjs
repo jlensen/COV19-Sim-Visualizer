@@ -6,7 +6,7 @@ import { UPDATE_PRIORITY ,Ticker, Container, Graphics } from '../pixi/pixi.mjs';
 class Simulation {
 
     constructor(seed, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
-        nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, genStore = false, app, scale) {
+        nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, genStore = false, app, scale, vis) {
         // Apparently javascript random does not accept a seed
         // So for this we need to find something or implement it ourselves
 
@@ -20,6 +20,9 @@ class Simulation {
         this.scale = scale;
         this.app.render(this.stage);
         this.ticker = new Ticker();
+
+        // VISUALISATIONS
+        this.vis = vis;
 
         // PARAMETERS
         this.seed = seed;
@@ -216,7 +219,7 @@ class Simulation {
             this.timeSpent[this.customerNow] = tx;
             this.customerInfected[this.customerNow] = ty;
             this.customerNow += 1;
-            console.log(this.stepStr);
+           // console.log(this.stepStr);
 
         }
 
@@ -232,6 +235,10 @@ class Simulation {
             if (this.nCustomers && Math.random() < this.probNewCustomer)
                 this.newCustomer();
         }
+        // visualisation code
+        if (this.currentStep % 10 === 0)
+            this.vis.frameUpdate(this.infectedCount, this.currentStep);
+
         if (this.nCustomers == 0 && this.customers.length == 0) {
             // end condition, do whatever we want?
             return;

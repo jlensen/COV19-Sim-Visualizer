@@ -79,3 +79,4 @@ for ( var i = 0; i < yValues.length; i++ ) {
 }
 
 Plotly.newPlot('heatmapDiv', data, layout);
+Plotly.newPlot('heatmapDiv2', data, layout);
