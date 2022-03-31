@@ -139,7 +139,7 @@ class Editor {
     // zooms in the given direction. True for in and false for out
     zoom(direction) {
         // TODO scaling amount needs to be determined sometime
-        let amount = direction ? 2 : 0.5;
+        let amount = direction ? 1.25 : 0.75;
         this.editorContents.scale.x *= amount;
         this.editorContents.scale.y *= amount;
         this.render();

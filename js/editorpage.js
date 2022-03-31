@@ -1,9 +1,9 @@
 import Editor from './modules/simulation/editor.mjs';
 import * as PIXI from './modules/pixi/pixi.mjs'
 
-let app = new PIXI.Renderer({ width: 900, height: 900, backgroundColor: 0x1099bb });
-let editor = new Editor(app, 30);
-editor.setStoresize(30, 30);
+let app = new PIXI.Renderer({ width: 700, height: 700, backgroundColor: 0x1099bb });
+let editor = new Editor(app, 20);
+editor.setStoresize(35, 35);
 console.log(editor)
 document.getElementById("editor").appendChild(app.view);
 
