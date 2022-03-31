@@ -120,6 +120,10 @@ class Simulation {
         this.app.render(this.stage);
     }
 
+    loadStore(storeGrid) {
+        // TODO load store from editor
+    }
+
     renderCustomers() {
         let infected = 0;
         this.c_graphics.clear();
