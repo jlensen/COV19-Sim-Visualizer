@@ -10,16 +10,35 @@
     <link rel="stylesheet" href="css/style.css"/> <!-- Overwrite default css here -->
 
     <script type="module" src="./js/editorpage.js"></script>
+
+    <title>Editor</title>
 </head>
 <body>
     <div class="container">
         <div class="row">
         <div id="editor" class="col-xs-8"></div>
         <div id="buttons" class="col-xs-4">
-            <button id="draw"><i class="bi bi-pencil-fill"></i></button>
-            <button id="erase"><i class="bi bi-eraser-fill"></i></button>
-            <button id="zoomin"><i class="bi bi-zoom-in"></i></button>
-            <button id="zoomout"><i class="bi bi-zoom-out"></i></button>
+            <div class="mb-3">
+                <p>Store size (sets width and height): </p>
+                <input id="storesize" class="form-control">
+            </div>
+            <div class="mb-3">
+                <button id="draw" class="btn btn-primary" data-bs-toggle="button" aria-pressed="true"><i class="bi bi-pencil-fill"></i></button>
+                <select id="objectSelect" class="form-select" aria-label="Default select example">
+                    <option selected value="1">Shelf</option>
+                    <option value="2">Wall</option>
+                    <option value="3">Exit</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <button id="erase" class="btn btn-primary"><i class="bi bi-eraser-fill"></i></button>
+            </div>
+            <div class="mb-3">
+                <button id="zoomin" class="btn btn-primary"><i class="bi bi-zoom-in"></i></button>
+            </div>
+            <div class="mb-3">
+                <button id="zoomout" class="btn btn-primary"><i class="bi bi-zoom-out"></i></button>
+            </div>
         </div>
         </div>
 

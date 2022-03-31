@@ -44,6 +44,9 @@ class Editor {
         for (let i = 0; i < this.grid.length; i++) {
             this.grid[i] = new Array(y).fill(0);
         }
+        this.objects.clear();
+        this.background.clear();
+        this.init();
     }
 
     init() {
@@ -71,7 +74,11 @@ class Editor {
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {
                 if (this.grid[i][j] == 1) {
-                    this.objects.beginFill(0xff69b4);
+                    this.objects.beginFill(0x121111);
+                } else if (this.grid[i][j] == 2) {
+                    this.objects.beginFill(0x8f8668);
+                } else if (this.grid[i][j] == 3) {
+                    this.objects.beginFill(0x8a4225);
                 } else {
                     continue;
                 }
