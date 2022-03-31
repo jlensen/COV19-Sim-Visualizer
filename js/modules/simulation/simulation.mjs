@@ -159,7 +159,10 @@ class Simulation {
         }
 
         this.ticker.add(tickUpdate.bind(this), UPDATE_PRIORITY.HIGH);
-        this.ticker.start()
+        this.ticker.start();
+        
+        // vis code
+        this.vis.moveData();
     }
 
     stopSim() {
@@ -168,10 +171,6 @@ class Simulation {
             this.ticker.destroy();
         }
         this.ticker = new Ticker();
-
-        // vis code
-        this.vis.saveData();
-
     }
 
     hasEnded() {

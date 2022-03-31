@@ -110,17 +110,17 @@ class Visualisations {
         this.lineChart1.update();
         //this.lineChart2.update();
     }
-    // transfer data from sim1 to visualisations in column2 and reset column1
-    saveData() {
+    // transfer data from sim1 to visualisations in column2
+    moveData() {
         this.linedata2 = this.lineChart1.data.datasets[0].data;
         this.labels =  this.lineChart1.data.labels;
         this.lineChart2.data.datasets[0].data = this.linedata2;
         this.lineChart2.data.labels = this.labels;
         this.lineChart2.update();
 
-        // this.labels = []; //clear labels for next sim
-        // this.lineChart1.data.datasets[0].data = [];
-        // this.lineChart1.data.labels = [];
+        this.labels = []; //clear labels for next sim
+        this.lineChart1.data.datasets[0].data = [];
+        this.lineChart1.data.labels = [];
     }
 }
 
