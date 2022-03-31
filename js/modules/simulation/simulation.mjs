@@ -154,7 +154,8 @@ class Simulation {
                 this.simStep();
                 this.renderCustomers();
             } else {
-                this.ticker.destroy();
+                this.stopSim();
+               // this.ticker.destroy(); this is double up with stopping sim
             }
         }
 

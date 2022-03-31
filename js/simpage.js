@@ -10,9 +10,11 @@ document.getElementById("sim").appendChild(app.view);
 
 let btn = document.getElementById("loadbtn");
 
-btn.addEventListener("click", startsim.bind(sim))
-document.getElementById("stopbtn").addEventListener("click", sim.stopSim.bind(sim))
+btn.addEventListener("click", startsim.bind(sim));
+document.getElementById("stopbtn").addEventListener("click", sim.stopSim.bind(sim));
 //btn.addEventListener("click", ticker.start.bind(this))
+document.getElementById("resetZoom").addEventListener("click", vis.resetZoom.bind(vis));
+
 
 let customer = 0;
 
@@ -38,3 +40,4 @@ function startsim() {
     //this.hasEnded = false;
     //this.runSimulation();
 }
+

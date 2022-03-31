@@ -29,13 +29,13 @@
                         <div class="form-group row">
                             <label for="cust_rate" class="col-sm-3 col-form-label">Customer Rate</label>
                             <div class="col-sm-3">
-                                <input type="cust_rate" class="form-control" id="cust_rate" placeholder="0.1" value="0.1">
+                                <input type="cust_rate" class="form-control" id="cust_rate" placeholder="0.1" value="0.2">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inf_rate" class="col-sm-3 col-form-label">Infection Rate</label>
                             <div class="col-sm-3">
-                                <input type="inf_rate" class="form-control" id="inf_rate" placeholder="0.05" value="0.05">
+                                <input type="inf_rate" class="form-control" id="inf_rate" placeholder="0.20" value="0.20">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -47,7 +47,7 @@
                         <div class="form-group row">
                             <label for="n_steps" class="col-sm-3 col-form-label">Number of Steps</label>
                             <div class="col-sm-3">
-                                <input type="n_steps" class="form-control" id="n_steps" placeholder="1000" value="1000">
+                                <input type="n_steps" class="form-control" id="n_steps" placeholder="1000" value="800">
                             </div>
                         </div>
                         <!--<div class="form-group row">
@@ -80,16 +80,12 @@
 
     <div class="chart-container" style="position: relative; float: left; height:40vh; width:49vw; margin-bottom:1vw">
         <canvas id="vis" width="800" height="500"></canvas>
-       <!-- <script type="module" src="./js/visualisations.js"></script>-->
-        <button onclick="reset()">Reset graphs</button>
+        <button id="resetZoom" class="btn btn-primary" style="margin: 20px">Reset zoom</button>
     </div>
     <div class="chart-container" style="position: relative; float: left; height:40vh; width: 49vw; margin-bottom:1vw">
         <canvas id="vis2" width="800" height="500"></canvas>
         <canvas id="overlay" width="800" height="500"></canvas>
     </div>
-        
-    <!--<script type="text/javascript" src="http://www.patrick-wied.at/static/heatmapjs/src/heatmap.js"></script> -->
-
         <div id="heatmapDiv" style="position: relative; float: right; height:45vw; width:45vw; margin:1vw; margin-top:10vw">
             <script type="module" src="./js/heatmap.js"></script>
         </div>
