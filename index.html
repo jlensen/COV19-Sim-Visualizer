@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css"/> <!-- Overwrite default css here -->
-
-    
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
 
     <title>Covid Store Simulation</title>
 </head>
@@ -75,10 +75,33 @@
         </div>
       </div>
 </body>
+<footer>
+
+
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width:49vw; margin-bottom:1vw">
+        <canvas id="vis" width="800" height="500"></canvas>
+       <!-- <script type="module" src="./js/visualisations.js"></script>-->
+        <button onclick="reset()">Reset graphs</button>
+    </div>
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width: 49vw; margin-bottom:1vw">
+        <canvas id="vis2" width="800" height="500"></canvas>
+        <canvas id="overlay" width="800" height="500"></canvas>
+    </div>
+        
+    <!--<script type="text/javascript" src="http://www.patrick-wied.at/static/heatmapjs/src/heatmap.js"></script> -->
+
+        <div id="heatmapDiv" style="position: relative; float: right; height:45vw; width:45vw; margin:1vw; margin-top:10vw">
+            <script type="module" src="./js/heatmap.js"></script>
+        </div>
+        <div id="heatmapDiv2" style="position: relative; float: right; height:45vw; width:45vw; margin:1vw; margin-top:10vw">
+            <script type="module" src="./js/heatmap.js"></script>
+        </div>
+        
+    </div>
 <!--<script>
     function Save() {
         var results = document.getElementById("parameter1").value
         document.getElementById("yourOutputDiv").innerHTML = results;
     } -->
-</script>
+</footer>
 </html>
