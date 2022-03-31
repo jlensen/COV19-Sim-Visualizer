@@ -4,10 +4,6 @@ class Visualisations {
     
         this.linedata = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20)); //.sort();
         this.linedata2 = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20));
-
-        // let data = sim.getStats();
-        // console.log('data = '+data.infections + ' infections, ' + data.step + ' steps, ');
-
         this.lineLabels = [];
         // bad implementations
         for (var i = 0; i < this.linedata.length; i++) {
@@ -103,20 +99,28 @@ class Visualisations {
     }
 
     frameUpdate(infCount, curStep) {
-        // this.linedata.push(infCount);
-        // this.linedata2.push(infCount);
-        // this.lineLabels.push(curStep);
-
         this.lineChart1.data.datasets.forEach((dataset) => {
             dataset.data.push(infCount);
         });
-        this.lineChart2.data.datasets.forEach((dataset) => {
-            dataset.data.push(infCount);
-        });
-        this.lineChart2.data.labels.push(curStep);
+        // this.lineChart2.data.datasets.forEach((dataset) => {
+        //     dataset.data.push(infCount);
+        // });
 
+        this.lineChart1.data.labels.push(curStep);
         this.lineChart1.update();
+        //this.lineChart2.update();
+    }
+    // transfer data from sim1 to visualisations in column2 and reset column1
+    saveData() {
+        this.linedata2 = this.lineChart1.data.datasets[0].data;
+        this.labels =  this.lineChart1.data.labels;
+        this.lineChart2.data.datasets[0].data = this.linedata2;
+        this.lineChart2.data.labels = this.labels;
         this.lineChart2.update();
+
+        // this.labels = []; //clear labels for next sim
+        // this.lineChart1.data.datasets[0].data = [];
+        // this.lineChart1.data.labels = [];
     }
 }
 

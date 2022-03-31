@@ -168,6 +168,10 @@ class Simulation {
             this.ticker.destroy();
         }
         this.ticker = new Ticker();
+
+        // vis code
+        this.vis.saveData();
+
     }
 
     hasEnded() {
@@ -241,6 +245,8 @@ class Simulation {
 
         if (this.nCustomers == 0 && this.customers.length == 0) {
             // end condition, do whatever we want?
+            // stop sim and update vis
+            this.stopSim();
             return;
         }
     }
