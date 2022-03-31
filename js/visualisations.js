@@ -97,7 +97,6 @@ class Visualisations {
         this.lineChart2.options.scales.x.min = 0;
         this.lineChart2.options.scales.x.max = this.lineChart2.data.labels.slice(-1);
         this.lineChart2.update();
-        console.log(this.lineChart1.data.labels.slice(-1) + '  graph 2: '+this.lineChart2.data.labels.slice(-1));
     }
 
     frameUpdate(infCount, curStep) {
