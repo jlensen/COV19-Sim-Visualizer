@@ -21,7 +21,6 @@
     <link rel="stylesheet" href="css/style.css" /> <!-- Overwrite default css here -->
 
     <script type="module" src="./js/simpage.js"></script>
-    <script type="module" src="./js/editorpage.js"></script>
 
     <title>Covid Store Simulation</title>
 </head>
@@ -77,6 +76,7 @@
                         <div class="col-sm-10">
                             <button id="loadbtn" class="btn btn-primary">Simulate</button>
                             <button id="stopbtn" class="btn btn-primary">Stop</button>
+                            <button id="genbtn" class="btn btn-primary">Generate Store</button>
                             <!-- butto nfor store editor modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal"
                                 data-target="#staticBackdrop">
@@ -116,7 +116,7 @@
                                         <select id="objectSelect" class="form-select"
                                             aria-label="Default select example">
                                             <option selected value="1">Shelf</option>
-                                            <!-- <option value="2">Wall</option> Take out walls until sim updated-->
+                                            <option value="2">Entrance</option>
                                             <option value="3">Exit</option>
                                         </select>
                                     </div>
@@ -137,7 +137,7 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Use map</button>
+                            <button type="button" id="usemapbtn" class="btn btn-primary" data-dismiss="modal">Use map</button>
                         </div>
                     </div>
                 </div>
