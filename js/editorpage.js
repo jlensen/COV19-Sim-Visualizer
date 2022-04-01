@@ -4,7 +4,6 @@ import * as PIXI from './modules/pixi/pixi.mjs'
 let app = new PIXI.Renderer({ width: 700, height: 700, backgroundColor: 0x1099bb });
 let editor = new Editor(app, 20);
 editor.setStoresize(35, 35);
-console.log(editor)
 document.getElementById("editor").appendChild(app.view);
 
 app.view.addEventListener('contextmenu', (e) => {
@@ -33,7 +32,7 @@ document.getElementById("objectSelect").addEventListener("change", () => {
 })
 
 document.getElementById("storesize").addEventListener("change", () => {
-    let size = parseInt(document.getElementById("storesize").value)
+    let size = parseInt(document.getElementById("storesize").value);
     editor.setStoresize(size, size);
 })
 

@@ -3,6 +3,8 @@ import { Container, Graphics, Rectangle } from '../pixi/pixi.mjs';
 class Editor {
     constructor(app, scale) {
         this.grid = null;
+        this.entrance = null;
+        this.exits = [];
         this.scale = scale;
         this.app = app;
         this.stage = new Container();
@@ -75,31 +77,45 @@ class Editor {
             for (let j = 0; j < this.grid[i].length; j++) {
                 if (this.grid[i][j] == 1) {
                     this.objects.beginFill(0x121111);
-                } else if (this.grid[i][j] == 2) {
-                    this.objects.beginFill(0x8f8668);
-                } else if (this.grid[i][j] == 3) {
-                    this.objects.beginFill(0x8a4225);
                 } else {
                     continue;
                 }
-                //this.graphics.beginFill(0x1c1f1d);
                 this.objects.drawRect(this.scale * i, this.scale * j, this.scale, this.scale);
                 this.objects.endFill();
             }
+        }
+        if (this.entrance != null) {
+            this.objects.beginFill(0x9ad94e);
+            this.objects.drawRect(this.scale * this.entrance[0], this.scale * this.entrance[1], this.scale, this.scale);
+            this.objects.endFill();
+        }
+        
+        for (let i = 0; i < this.exits.length; i++) {
+            this.objects.beginFill(0x8a4225);
+            this.objects.drawRect(this.scale * this.exits[i][0], this.scale * this.exits[i][1], this.scale, this.scale);
+            this.objects.endFill();
         }
         this.app.render(this.stage);
     }
 
     handleDrawClick(event) {
         // set dragging to true, so if we move the mouse handleDRag will know we can still draw
-        console.log("wat")
-        if (event.data.button == 0) {
+        if (event.data.button != 0) {
+            return;
+        }
         this.drawDrag = true;
         let pos = event.data.getLocalPosition(this.objects);
         let x = Math.floor(pos.x / this.scale);
         let y = Math.floor(pos.y / this.scale);
-        this.grid[x][y] = this.selected;
-        this.render();
+        if (x < this.grid.length && y < this.grid.length) {
+            if (this.selected == 1) {
+                this.grid[x][y] = this.selected;
+            } else if (this.selected == 2 && this.entrance == null) {
+                this.entrance = [x, y];
+            } else if (this.selected == 3) {
+                this.exits.push([x, y]);
+            }
+            this.render();
         }
     }
 
@@ -108,10 +124,18 @@ class Editor {
         if (this.drawDrag) {
             //this.handleDrawClick(event);
             let pos = event.data.getLocalPosition(this.objects);
-        let x = Math.floor(pos.x / this.scale);
-        let y = Math.floor(pos.y / this.scale);
-        this.grid[x][y] = this.selected;
-        this.render();
+            let x = Math.floor(pos.x / this.scale);
+            let y = Math.floor(pos.y / this.scale);
+            if (x < this.grid.length && y < this.grid.length) {
+                if (this.selected == 1) {
+                    this.grid[x][y] = this.selected;
+                } else if (this.selected == 2 && this.entrance.length == null) {
+                    this.entrance = [x, y];
+                } else if (this.selected == 3) {
+                    this.exits.push([x, y]);
+                }
+                this.render();
+            }
         }
     }
 
@@ -143,6 +167,17 @@ class Editor {
         this.editorContents.scale.x *= amount;
         this.editorContents.scale.y *= amount;
         this.render();
+    }
+
+    getMapObject() {
+        console.log(this.grid)
+        console.log(this.exits)
+        console.log(this.entrances)
+        return {
+            grid: this.grid,
+            exits: this.exits,
+            entrance: this.entrance,
+        }
     }
 }
 
