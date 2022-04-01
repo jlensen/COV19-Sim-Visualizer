@@ -6,7 +6,7 @@ import { UPDATE_PRIORITY ,Ticker, Container, Graphics } from '../pixi/pixi.mjs';
 class Simulation {
 
     constructor(seed, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
-        nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, genStore = false, app, scale, vis) {
+        nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, app, scale, vis) {
         // Apparently javascript random does not accept a seed
         // So for this we need to find something or implement it ourselves
 
@@ -36,7 +36,6 @@ class Simulation {
         this.Ly = Ly;
         this.dx = dx;
         this.nShelves = nShelves;
-        this.genStore = genStore;
 
         //this.initState();
     }
@@ -48,17 +47,6 @@ class Simulation {
         this.currentStep = 0;
         this.infectedCount = 0;
         this.customers = [];
-
-
-        // INITIALIZATION
-        this.store = new Store(this.Lx, this.Ly, this.dx);
-        if (this.genStore) {
-            this.store.initializeShelvesRegular(this.nShelves);
-        } else {
-            // load some store defined somewhere
-        }
-        this.store.createStaticGraph();
-        this.store.initializeDoors();
 
         if (this.nCustomers == 1) {
 			this.probInfCustomer = -1;
@@ -123,6 +111,20 @@ class Simulation {
         this.app.render(this.stage);
     }
 
+    genStore() {
+        this.store = new Store(1.0);
+        this.store.genMap(this.Lx, this.Ly);
+        this.store.initializeShelvesRegular(this.nShelves);
+        this.store.createStaticGraph();
+        this.store.initializeDoors();
+    }
+
+    loadStore(mapObject) {
+        this.store = new Store(1.0);
+        this.store.loadMap(mapObject);
+        this.store.createStaticGraph();
+    }
+
     renderCustomers() {
         let infected = 0;
         this.c_graphics.clear();
@@ -155,6 +157,7 @@ class Simulation {
                 this.renderCustomers();
             } else {
                 this.ticker.destroy();
+                this.ticker = new Ticker();
             }
         }
 
@@ -189,7 +192,7 @@ class Simulation {
         this.store.initializeExposureDuringTimeStep()
         this.currentStep++;
         if (this.customersHeadExit > this.maxQueue)
-            this.maxQueue = customersHeadExit
+            this.maxQueue = this.customersHeadExit
 
         let customersExit = [];
         this.customersHeadExit = 0;

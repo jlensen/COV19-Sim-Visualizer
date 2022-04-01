@@ -1,26 +1,46 @@
 import {params, randRange} from './util.mjs'
 
 class Store {
-    constructor(Lx, Ly, dx) {
-        this.Lx = Lx;
-        this.Ly = Ly;
+    constructor(dx) {
         this.dt = 1.0;
         this.dx = dx;
         this.dy = dx;
+    }
+
+    loadMap(mapObject) {
+        this.Lx = mapObject.grid.length;
+        this.Ly = mapObject.grid.length;
+        this.blocked = mapObject.grid;
+        this.blockedShelves = mapObject.grid;
+        this.invLxLy = 1.0 / (this.Lx * this.Ly);
+        this.entrance = null;
+        this.useDiffusion = null;
+        this.entrance = mapObject.entrance;
+        this.exit = mapObject.exits;
+        this.exitActive = new Array(mapObject.exits.length).fill(0);
+        this.graph;
+        this.initState();
+    }
+
+    genMap(Lx, Ly) {
+        this.Lx = Lx;
+        this.Ly = Ly;
         //this.blocked = null
         this.blocked = new Array(this.Lx);
         for (let i = 0; i < this.blocked.length; i++) {
             this.blocked[i] = new Array(this.Ly).fill(0);
         }
         this.blockedShelves = null;
-        this.invLxLy = 1.0 / (Lx * Ly);
+        this.invLxLy = 1.0 / (this.Lx * this.Ly);
         this.entrance = null;
         this.useDiffusion = null;
         this.exit = [];
         this.exitActive = new Array(params.NEXITS).fill(0);
         this.graph;
+        this.initState();
+    }
 
-        // TODO check if we need all this, seems a bit useless to have it three times
+    initState() {
         this.plumes = new Array(this.Lx);
         for (let i = 0; i < this.plumes.length; i++) {
             this.plumes[i] = new Array(this.Ly).fill(0);
@@ -107,7 +127,7 @@ class Store {
     }
 
     getCoordFromIndex(idx) {
-        return [Math.floor(idx / this.Lx).toFixed(), idx % this.Lx];
+        return [Math.floor(idx / this.Lx), idx % this.Lx];
     }
 
     getIndexFromCoord(coord) {
@@ -126,7 +146,7 @@ class Store {
     findMinExit(exits) {
         let minIdx = 0;
         let min = exits[0][0] + exits[0][1];
-        for (let i = 1; i < exits; i++) {
+        for (let i = 0; i < exits.length; i++) {
             let sum = exits[i][0] + exits[i][1];
             if (sum < min)
                 min = sum;
@@ -258,7 +278,7 @@ class Store {
         }
         console.log(this.exit)
         // TODO do we just pop off the last element here? they slice until last element
-        this.exit.pop();
+        //this.exit.pop();
     }
 }
 
