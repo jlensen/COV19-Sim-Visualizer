@@ -1,4 +1,5 @@
 import { Container, Graphics, Rectangle } from '../pixi/pixi.mjs';
+import { checkCoordIn2DArray } from './util.mjs';
 
 class Editor {
     constructor(app, scale) {
@@ -42,10 +43,12 @@ class Editor {
     }
 
     setStoresize(x, y) {
+        console.log(x)
         this.grid = new Array(x);
         for (let i = 0; i < this.grid.length; i++) {
             this.grid[i] = new Array(y).fill(0);
         }
+        console.log(this.grid.length)
         this.objects.clear();
         this.background.clear();
         this.init();
@@ -108,7 +111,12 @@ class Editor {
         let x = Math.floor(pos.x / this.scale);
         let y = Math.floor(pos.y / this.scale);
         if (x < this.grid.length && y < this.grid.length) {
-            if (this.selected == 1) {
+            if (this.selected == 0) {
+                this.grid[x][y] = this.selected;
+                if (this.entrance != null && this.entrance[0] == x && this.entrance[1] == y) {
+                    this.entrance = null;
+                }
+            } else if (this.selected <= 1) {
                 this.grid[x][y] = this.selected;
             } else if (this.selected == 2 && this.entrance == null) {
                 this.entrance = [x, y];
@@ -127,7 +135,12 @@ class Editor {
             let x = Math.floor(pos.x / this.scale);
             let y = Math.floor(pos.y / this.scale);
             if (x < this.grid.length && y < this.grid.length) {
-                if (this.selected == 1) {
+                if (this.selected == 0) {
+                    this.grid[x][y] = this.selected;
+                    if (this.entrance != null && this.entrance[0] == x && this.entrance[1] == y) {
+                        this.entrance = null;
+                    }
+                } else if (this.selected == 1) {
                     this.grid[x][y] = this.selected;
                 } else if (this.selected == 2 && this.entrance.length == null) {
                     this.entrance = [x, y];
@@ -172,7 +185,7 @@ class Editor {
     getMapObject() {
         console.log(this.grid)
         console.log(this.exits)
-        console.log(this.entrances)
+        console.log(this.entrance)
         return {
             grid: this.grid,
             exits: this.exits,

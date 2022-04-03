@@ -13,7 +13,6 @@ class Store {
         this.blocked = mapObject.grid;
         this.blockedShelves = mapObject.grid;
         this.invLxLy = 1.0 / (this.Lx * this.Ly);
-        this.entrance = null;
         this.useDiffusion = null;
         this.entrance = mapObject.entrance;
         this.exit = mapObject.exits;
@@ -135,24 +134,12 @@ class Store {
     }
 
     getExit() {
-        //let exitInd = Math.min(this.exitActive);
-        let exitInd = this.findMinExit(this.exitActive);
+        let exitInd = this.exitActive.indexOf(Math.min(...this.exitActive));
+        console.log(this.exitActive)
         console.log("exit is: " + exitInd);
         this.exitActive[exitInd] += 1;
         let exit = this.exit[exitInd];
         return [parseInt(exit[0]), parseInt(exit[1])];
-    }
-
-    findMinExit(exits) {
-        let minIdx = 0;
-        let min = exits[0][0] + exits[0][1];
-        for (let i = 0; i < exits.length; i++) {
-            let sum = exits[i][0] + exits[i][1];
-            if (sum < min)
-                min = sum;
-                minIdx = i;
-        }
-        return minIdx;
     }
 
     updateQueue(exitPos) {
@@ -161,7 +148,6 @@ class Store {
                 this.exitActive[i] -= 1;
                 break;
         }
-        //this.exitActive[this.exit.find(exitPos)] -= 1;
     }
 
     createStaticGraph() {
@@ -170,13 +156,11 @@ class Store {
         let blockedNodesList = [].concat.apply([], this.blocked);
 
         for (let i = 0; i < totNodes; i++) {
-            if (blockedNodesList[i]==0 && blockedNodesList[i+1] == 0 && this.graph.areConnected(i,i + 1) == false && i + 1 % this.Lx != 0) {
+            if (blockedNodesList[i] == 0 && blockedNodesList[i+1] == 0 && this.graph.areConnected(i,i + 1) == false && (i + 1) % this.Lx != 0) {
                 this.graph.addEdge(i, i + 1);
             }
-        }
 
-        for (let i = 0; i < totNodes; i++) {
-            if (blockedNodesList[i]==0 && blockedNodesList[i+this.Lx] == 0 && this.graph.areConnected(i,i + this.Lx) == false) {
+            if (blockedNodesList[i] == 0 && blockedNodesList[i+this.Lx] == 0 && this.graph.areConnected(i,i + this.Lx) == false) {
                 this.graph.addEdge(i, i + this.Lx);
             }
         }
@@ -221,6 +205,7 @@ class Store {
                     if (i < 0 || j < 0) {
                         continue;
                     }
+                    console.log("shelveserror", i)
                     this.blocked[i][j] = 1;
                 }
             }

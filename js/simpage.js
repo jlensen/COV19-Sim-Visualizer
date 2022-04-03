@@ -43,6 +43,10 @@ document.getElementById("objectSelect").addEventListener("change", () => {
 
 document.getElementById("storesize").addEventListener("change", () => {
     let size = parseInt(document.getElementById("storesize").value);
+    console.log(size)
+    if (size > 100) {
+        return;
+    }
     editor.setStoresize(size, size);
 })
 

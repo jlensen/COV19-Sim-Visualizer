@@ -200,7 +200,6 @@ class SmartCustomer extends Customer {
         if (!(this.path.length > 0)) {
             console.log(this.x, this.y, this.shoppingList, this.headingForExit);
         }
-
         let step = store.getCoordFromIndex(this.path[0]);
         // check that step is possible
         if (store.blocked[step[0]][step[1]] == 0) {
