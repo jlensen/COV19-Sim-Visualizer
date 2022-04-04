@@ -240,12 +240,13 @@ class Simulation {
             if (this.nCustomers && Math.random() < this.probNewCustomer)
                 this.newCustomer();
         }
-        // visualisation code
+
+        // visualisation updates
         if (this.currentStep % 10 === 0)
             this.vis.frameUpdate(this.infectedCount, this.currentStep);
-        // heatmap code
+        // heatmap updates
         if (this.currentStep % 10 === 0) {
-            this.hmp.frameUpdate(this.store.plumes, this.scale, this.currentStep);
+            this.hmp.frameUpdate(this.store.plumes, this.currentStep);
         }
 
 

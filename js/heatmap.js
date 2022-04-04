@@ -6,29 +6,29 @@ class Heatmaps {
     this.Ly = Ly;
     // this.initMatrix = sim.store.plumes;
     var z0 = new Array(9).fill().map(() => Math.random());
-var z1 = new Array(9).fill().map(() => Math.random());
-var z2 = new Array(9).fill().map(() => Math.random());
-var z3 = new Array(9).fill().map(() => Math.random());
-var z4 = new Array(9).fill().map(() => Math.random());
-var z5 = new Array(9).fill().map(() => Math.random());
-var z6 = new Array(9).fill().map(() => Math.random());
-var z7 = new Array(9).fill().map(() => Math.random());
-var z8 = new Array(9).fill().map(() => Math.random());
+    var z1 = new Array(9).fill().map(() => Math.random());
+    var z2 = new Array(9).fill().map(() => Math.random());
+    var z3 = new Array(9).fill().map(() => Math.random());
+    var z4 = new Array(9).fill().map(() => Math.random());
+    var z5 = new Array(9).fill().map(() => Math.random());
+    var z6 = new Array(9).fill().map(() => Math.random());
+    var z7 = new Array(9).fill().map(() => Math.random());
+    var z8 = new Array(9).fill().map(() => Math.random());
     //console.log(z0);
 
     this.totPlumes = new Array(this.Lx);
     for (let i = 0; i < this.totPlumes.length; i++) {
         this.totPlumes[i] = new Array(this.Ly).fill(0);
     }
-    console.log(this.totPlumes);
+    //console.log(this.totPlumes);
 
     var xValues = ['A', 'B', 'C', 'D', 'E'];
     var yValues = ['W', 'X', 'Y', 'Z'];
     var zValues = this.totPlumes;
 
     var colorscaleValue = [
-      [0, 'rgba(39, 58, 245, 1)'],
-      [1, 'rgba(245, 243, 39, 1)']
+      [0, 'rgba(0, 255, 29, 1)'],
+      [1, 'rgba(255, 25, 25, 1)']
     ];
 
     var data = [{
@@ -36,8 +36,8 @@ var z8 = new Array(9).fill().map(() => Math.random());
       // y: yValues,
       z: zValues,
       type: 'heatmap',
-      colorscale: colorscaleValue,
-      showscale: false
+      //colorscale: colorscaleValue,
+      showscale: true
     }];
 
     var layout = {
@@ -87,15 +87,16 @@ var z8 = new Array(9).fill().map(() => Math.random());
     Plotly.newPlot('heatmapDiv', data, layout);
     Plotly.newPlot('heatmapDiv2', data, layout);
   }
-  frameUpdate(plumes, scale, curStep) {
-    for (let i = 1; i < plumes.length; i++) {
+  frameUpdate(plumes, curStep) {
+    for (let i = 0; i < plumes.length; i++) {
       for (let j = 0; j < plumes[i].length; j++) {
-        this.totPlumes[i][j] += plumes[i][j];
+        this.totPlumes[i][j] += plumes[i][j]/curStep;
       }
     }
-    var update = {z: this.totPlumes}
-    Plotly.restyle('heatmapDiv', update);
-    //console.log(this.totPlumes);
+    var update = this.totPlumes;
+    Plotly.restyle('heatmapDiv', 'z' , [update]);
+    //Plotly.relayout('heatmapDiv', test);
+    //console.log(update.z);
   }
 }
 

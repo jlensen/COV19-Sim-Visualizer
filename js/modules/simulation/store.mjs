@@ -197,7 +197,7 @@ class Store {
             for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
                 for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
                     // TODO, check this later, why is it sometimes smaller than 0
-                    console.log(i, j)
+                    //console.log(i, j)
                     if (i < 0 || j < 0) {
                         continue;
                     }
@@ -256,7 +256,7 @@ class Store {
             this.exit.push(this.getCoordFromIndex(exitInd));
             i += params.CASHIERD;
         }
-        console.log(this.exit)
+        //console.log(this.exit)
         // TODO do we just pop off the last element here? they slice until last element
         this.exit.pop();
     }
