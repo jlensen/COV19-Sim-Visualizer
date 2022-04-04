@@ -1,7 +1,6 @@
 class Visualisations {
-    constructor(ctx, ctx2, sim) { //gets two canvas contexts and the simulation that is running
+    constructor(ctx, ctx2) { //gets two canvas contexts and the simulation that is running
 
-    
         this.linedata = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20)); //.sort();
         this.linedata2 = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20));
         this.lineLabels = [];
@@ -124,5 +123,5 @@ class Visualisations {
         this.lineChart1.data.labels = [];
     }
 }
-
 export default Visualisations;
+
