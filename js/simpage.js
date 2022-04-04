@@ -7,7 +7,7 @@ import Visualisations from './visualisations.js'
 let simapp = new PIXI.Renderer({ width: 300, height: 300, backgroundColor: 0x1099bb });
 simapp.render(new PIXI.Container);
 var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'), sim);
-var sim = new Simulation(0, 20, 20, 10, 50, 0.1, 0.1, 20, 1000, 1.0, true, simapp, 15, vis);
+var sim = new Simulation(0, 20, 20, 10, 50, 0.1, 0.1, 20, 1000, true, 1.0, simapp, 15, vis);
 document.getElementById("sim").appendChild(simapp.view);
 
 let editorapp = new PIXI.Renderer({ width: 700, height: 700, backgroundColor: 0x1099bb });

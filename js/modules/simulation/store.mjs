@@ -13,7 +13,7 @@ class Store {
         this.blocked = mapObject.grid;
         this.blockedShelves = mapObject.grid;
         this.invLxLy = 1.0 / (this.Lx * this.Ly);
-        this.useDiffusion = null;
+        this.useDiffusion = false;
         this.entrance = mapObject.entrance;
         this.exit = mapObject.exits;
         this.exitActive = new Array(mapObject.exits.length).fill(0);
@@ -32,7 +32,7 @@ class Store {
         this.blockedShelves = null;
         this.invLxLy = 1.0 / (this.Lx * this.Ly);
         this.entrance = null;
-        this.useDiffusion = null;
+        this.useDiffusion = false;
         this.exit = [];
         this.exitActive = new Array(params.NEXITS).fill(0);
         this.graph;
@@ -42,15 +42,15 @@ class Store {
     initState() {
         this.plumes = new Array(this.Lx);
         for (let i = 0; i < this.plumes.length; i++) {
-            this.plumes[i] = new Array(this.Ly).fill(0);
+            this.plumes[i] = new Array(this.Ly).fill(0.0);
         }
         this.plumesNew = new Array(this.Lx);
         for (let i = 0; i < this.plumesNew.length; i++) {
-            this.plumesNew[i] = new Array(this.Ly).fill(0);
+            this.plumesNew[i] = new Array(this.Ly).fill(0.0);
         }
         this.plumesIntegrated = new Array(this.Lx);
         for (let i = 0; i < this.plumesIntegrated.length; i++) {
-            this.plumesIntegrated[i] = new Array(this.Ly).fill(0);
+            this.plumesIntegrated[i] = new Array(this.Ly).fill(0.0);
         }
         this.diffusionCoeff = new Array(this.Lx);
         for (let i = 0; i < this.diffusionCoeff.length; i++) {
@@ -69,14 +69,15 @@ class Store {
 
     // TODO check this, exposure seems to be high
     updateDiffusion() {
-        this.plumesNew = [...this.plumes];
+        this.plumesNew = this.plumes.map((a) => a.slice())
 
         // TODO lots of loops, maybe we can combine some of them?
         for (let i = 1; i < this.plumesNew.length; i++) {
             for (let j = 0; j < this.plumesNew[i].length; j++) {
-                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i-1][j] * this.dt * (this.plumes[i-1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF;
+                this.plumesNew[i][j] = this.plumesNew[i][j] + (this.diffusionCoeff[i][j] * this.diffusionCoeff[i-1][j] * this.dt * (this.plumes[i-1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF);
             }
         }
+       
 
         for (let i = 0; i < this.plumesNew.length - 1; i++) {
             for (let j = 0; j < this.plumesNew[i].length; j++) {
@@ -104,7 +105,6 @@ class Store {
                 this.plumesIntegrated[i][j] += this.plumesNew[i][j]
             }
         }
-
         this.plumes = this.plumesNew;
     }
 
