@@ -171,8 +171,7 @@ class Simulation {
         
         // vis code
         this.vis.moveData();
-        this.visB.moveData();
-        console.log(this.store.graph)
+        //console.log(this.store.graph)
     }
 
     stopSim() {
@@ -250,7 +249,7 @@ class Simulation {
         }
 
         // visualisation updates
-        if (this.currentStep % 10 === 0) {
+        if (this.currentStep % 2 === 0) {
             var totNewInfections = 0;
             this.customers.forEach(c => {
                 if (c.newInfection) {
@@ -258,8 +257,9 @@ class Simulation {
                 }
             });
             this.vis.frameUpdate(this.infectedCount, totNewInfections, this.currentStep);
-            //this.visB.frameUpdate(totNewInfections, this.currentStep);
-           // this.hmp.frameUpdate(this.store.plumes, this.currentStep);
+        }
+        if (this.currentStep % 20 === 0) {
+            this.hmp.frameUpdate(this.store.plumes, this.currentStep);
         }
 
 

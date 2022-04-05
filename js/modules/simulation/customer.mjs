@@ -169,15 +169,15 @@ class SmartCustomer extends Customer {
         // heading for exit
         if (this.shoppingList.length == 0) {
             if (!this.atExit(store)) {
-                console.log("not at exit", this.waitingTime)
+                //console.log("not at exit", this.waitingTime)
                 this.shoppingList.push(store.getExit());
                 this.headingForExit = 1;
             } else if (this.atExit(store) && this.cashierWaitingTime > 0) {
-                console.log("now just waiting")
+               // console.log("now just waiting")
                 this.cashierWaitingTime -= 1;
                 return [this.x, this.y]; 
             } else {
-                console.log("yes can exit")
+                //console.log("yes can exit")
                 store.blocked[this.x][this.y] = 0;
                 return [-1, -1];
             }

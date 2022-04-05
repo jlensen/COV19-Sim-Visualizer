@@ -31,10 +31,10 @@ class Visualisations {
                     label: 'Number of new infections',
                     data: this.linedata3,
                     backgroundColor: [
-                        'rgba(180, 23, 255, 0.2)',
+                        'rgba(25, 128, 255, 0.2)',
                     ],
                     borderColor: [
-                        'rgba(180, 23, 255, 1)',
+                        'rgba(25, 128, 255, 1)',
                     ],
                     borderWidth: 1
                 }]
@@ -66,10 +66,10 @@ class Visualisations {
                     label: 'Number of  infected people in the store',
                     data: this.linedata2,
                     backgroundColor: [
-                        'rgba(99, 255, 132, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
                     ],
                     borderColor: [
-                        'rgba(99, 255, 132, 1)',
+                        'rgba(255, 99, 132, 1)',
                     ],
                     borderWidth: 1
                 },
@@ -78,10 +78,10 @@ class Visualisations {
                     label: 'Number of new infections',
                     data: this.linedata4,
                     backgroundColor: [
-                        'rgba(255, 235, 50, 0.3)',
+                        'rgba(25, 128, 255, 0.2)',
                     ],
                     borderColor: [
-                        'rgba(255, 235, 50, 1)',
+                        'rgba(25, 128, 255, 1)',
                     ],
                     borderWidth: 1
                 }]
@@ -130,16 +130,16 @@ class Visualisations {
     moveData() {
         this.linedata2 = this.lineChart1.data.datasets[0].data;
         this.linedata4 = this.lineChart1.data.datasets[1].data;
-        this.lineLabels =  this.lineChart1.data.labels;
         this.lineChart2.data.datasets[0].data = this.linedata2;
         this.lineChart2.data.datasets[1].data = this.linedata4;
-        this.lineChart2.data.labels = this.lineLabels;
+        this.lineChart2.data.labels = this.lineChart1.data.labels;
         this.lineChart2.update();
 
-        this.lineLabels = []; //clear labels for next sim
+       // this.lineLabels = []; //clear labels for next sim
         this.lineChart1.data.datasets[0].data = [];
         this.lineChart1.data.datasets[1].data = [];
         this.lineChart1.data.labels = [];
+        console.log(this.lineChart1.data.labels);
     }
 }
 export default Visualisations;

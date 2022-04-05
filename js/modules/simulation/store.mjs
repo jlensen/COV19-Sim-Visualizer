@@ -135,8 +135,8 @@ class Store {
 
     getExit() {
         let exitInd = this.exitActive.indexOf(Math.min(...this.exitActive));
-        console.log(this.exitActive)
-        console.log("exit is: " + exitInd);
+        //console.log(this.exitActive)
+        //console.log("exit is: " + exitInd);
         this.exitActive[exitInd] += 1;
         let exit = this.exit[exitInd];
         return [parseInt(exit[0]), parseInt(exit[1])];
