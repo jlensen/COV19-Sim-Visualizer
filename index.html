@@ -38,31 +38,36 @@
                     <div class="form-group row">
                         <label for="n_cust" class="col-sm-3 col-form-label">Number of Customers</label>
                         <div class="col-sm-3">
-                            <input type="n_cust" class="form-control" id="n_cust" placeholder="50" value="50">
+                            <input type="number" class="form-control" id="n_cust" placeholder="50" value="50" required min="1">
+                            <span id="n_cust_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="cust_rate" class="col-sm-3 col-form-label">Customer Rate</label>
                         <div class="col-sm-3">
-                            <input type="cust_rate" class="form-control" id="cust_rate" placeholder="0.1" value="0.1">
+                            <input type="number" class="form-control" id="cust_rate" placeholder="0.1" value="0.1" step="0.01" required min="0" max="1">
+                            <span id="cust_rate_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inf_rate" class="col-sm-3 col-form-label">Infection Rate</label>
                         <div class="col-sm-3">
-                            <input type="inf_rate" class="form-control" id="inf_rate" placeholder="0.05" value="0.05">
+                            <input type="number" class="form-control" id="inf_rate" placeholder="0.05" value="0.05" step="0.01" required min="0" max="1">
+                            <span id="inf_rate_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="n_shelves" class="col-sm-3 col-form-label">Number of Shelves</label>
                         <div class="col-sm-3">
-                            <input type="n_shelves" class="form-control" id="n_shelves" placeholder="10" value="10">
+                            <input type="number" class="form-control" id="n_shelves" placeholder="10" value="10" required min="1">
+                            <span id="n_shelves_error"></span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="n_steps" class="col-sm-3 col-form-label">Number of Steps</label>
                         <div class="col-sm-3">
-                            <input type="n_steps" class="form-control" id="n_steps" placeholder="1000" value="1000">
+                            <input type="numer" class="form-control" id="n_steps" placeholder="1000" value="1000" required min="1">
+                            <span id="n_steps_error"></span>
                         </div>
                     </div>
                     <!--<div class="form-group row">
