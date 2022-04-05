@@ -2,13 +2,18 @@ import Simulation from './modules/simulation/simulation.mjs'
 import Editor from './modules/simulation/editor.mjs';
 import * as PIXI from './modules/pixi/pixi.mjs'
 import Visualisations from './visualisations.js'
+import Heatmaps from './heatmap.js'
 
 
 let simapp = new PIXI.Renderer({ width: 300, height: 300, backgroundColor: 0x1099bb });
 simapp.render(new PIXI.Container);
-var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'), sim);
-var sim = new Simulation(0, 20, 20, 10, 50, 0.1, 0.1, 20, 1000, true, 1.0, simapp, 15, vis);
 document.getElementById("sim").appendChild(simapp.view);
+var Lx = 20; 
+var Ly = 20;
+var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'), sim);
+var hmp = new Heatmaps(Lx, Ly);
+var sim = new Simulation(0, Lx, Ly, 10, 50, 0.1, 0.1, 20, 1000, false, 1.0, true, simapp, 15, vis, hmp);
+
 
 let editorapp = new PIXI.Renderer({ width: 700, height: 700, backgroundColor: 0x1099bb });
 let editor = new Editor(editorapp, 35);
@@ -32,6 +37,12 @@ document.getElementById("erase").addEventListener("click", () => {
     // TODO add support for selecting different objects to draw
     editor.selected = 0;
 })
+
+
+//btn.addEventListener("click", startsim.bind(sim));
+//document.getElementById("stopbtn").addEventListener("click", sim.stopSim.bind(sim));
+//btn.addEventListener("click", ticker.start.bind(this))
+document.getElementById("resetZoom").addEventListener("click", vis.resetZoom.bind(vis));
 
 document.getElementById("draw").addEventListener("click", () => {
     editor.selected = document.getElementById("objectSelect").value;
@@ -116,3 +127,4 @@ function startsim() {
     //this.hasEnded = false;
     //this.runSimulation();
 }
+
