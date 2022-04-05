@@ -12,9 +12,9 @@ document.getElementById("sim").appendChild(simapp.view);
 var Lx = 20; 
 var Ly = 20;
 var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'));
-var visB = new VisB(document.getElementById('visB1').getContext('2d'), document.getElementById('visB2').getContext('2d'));
+//var visB = new VisB(document.getElementById('visB1').getContext('2d'), document.getElementById('visB2').getContext('2d'));
 var hmp = new Heatmaps(Lx, Ly);
-var sim = new Simulation(0, Lx, Ly, 10, 50, 0.1, 0.1, 20, 1000, false, 1.0, true, simapp, 15, vis, visB, hmp);
+var sim = new Simulation(0, Lx, Ly, 10, 50, 0.1, 0.1, 20, 1000, false, 1.0, true, simapp, 15, vis, hmp);
 
 let editorapp = new PIXI.Renderer({ width: 700, height: 700, backgroundColor: 0x1099bb });
 let editor = new Editor(editorapp, 35);

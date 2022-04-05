@@ -13,7 +13,7 @@ class VisB {
                 labels: this.lineLabels,
                 datasets: [{
                     fill: true,
-                    label: 'Number of infected people in the store',
+                    label: 'Number of new infections',
                     data: this.linedata,
                     backgroundColor: [
                         'rgba(180, 23, 255, 0.2)',
@@ -48,7 +48,7 @@ class VisB {
                 labels: this.lineLabels,
                 datasets: [{
                     fill: true,
-                    label: 'Number of  infected people in the store',
+                    label: 'Number of new infections',
                     data: this.linedata2,
                     backgroundColor: [
                         'rgba(255, 235, 50, 0.3)',
@@ -95,13 +95,10 @@ class VisB {
         this.lineChart2.update();
     }
 
-    frameUpdate(customers, curStep) {
+    frameUpdate(newInfections, curStep) {
         this.lineChart1.data.datasets.forEach((dataset) => {
-            //dataset.data.push(infCount);
+            dataset.data.push(newInfections);
         });
-        // this.lineChart2.data.datasets.forEach((dataset) => {
-        //     dataset.data.push(infCount);
-        // });
 
         this.lineChart1.data.labels.push(curStep);
         this.lineChart1.update();

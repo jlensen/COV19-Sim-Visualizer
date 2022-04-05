@@ -19,6 +19,7 @@ class Customer {
         this.cashierWaitingTime = null;
         this.waitingTime = 0;
         this.headingForExit = 0;
+        this.newInfection = false;
     }
 
     // should be an array with only an x and a y.
@@ -152,8 +153,8 @@ class SmartCustomer extends Customer {
         }
         var threshold = 1;
         // Code for exposure infection graphs
-        if (this.exposure >= threshold) {
-            store.addInfectionCount(this);
+        if (this.exposure >= threshold && !this.newInfection) {
+            this.newInfection = true;
         }
 
         if (this.infected == 1) 

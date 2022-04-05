@@ -1,8 +1,11 @@
 class Visualisations {
     constructor(ctx, ctx2) { //gets two canvas contexts and the simulation that is running
 
-        this.linedata = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20)); //.sort();
-        this.linedata2 = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20));
+        this.linedata = [];
+        this.linedata2 = [];
+        this.linedata3 = [];
+        this.linedata4 = [];
+        
         this.lineLabels = [];
         // bad implementations
         // const ctx2 = document.getElementById('vis2').getContext('2d');
@@ -20,6 +23,18 @@ class Visualisations {
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    fill: true,
+                    label: 'Number of new infections',
+                    data: this.linedata3,
+                    backgroundColor: [
+                        'rgba(180, 23, 255, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(180, 23, 255, 1)',
                     ],
                     borderWidth: 1
                 }]
@@ -57,6 +72,18 @@ class Visualisations {
                         'rgba(99, 255, 132, 1)',
                     ],
                     borderWidth: 1
+                },
+                {
+                    fill: true,
+                    label: 'Number of new infections',
+                    data: this.linedata4,
+                    backgroundColor: [
+                        'rgba(255, 235, 50, 0.3)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 235, 50, 1)',
+                    ],
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -77,9 +104,7 @@ class Visualisations {
         });
 
                 // zooms the graph from point of clicking to 10 ticks further (x axis)
-        function zoomIn(chart, mousePos1, mousePos2)
-            {
-    
+        function zoomIn(chart, mousePos1, mousePos2) {
             chart.options.scales.x.min = mousePos1;
             chart.options.scales.x.max = mousePos2;
             chart.update();
@@ -95,28 +120,25 @@ class Visualisations {
         this.lineChart2.update();
     }
 
-    frameUpdate(infCount, curStep) {
-        this.lineChart1.data.datasets.forEach((dataset) => {
-            dataset.data.push(infCount);
-        });
-        // this.lineChart2.data.datasets.forEach((dataset) => {
-        //     dataset.data.push(infCount);
-        // });
-
+    frameUpdate(infCount, newInfections,curStep) {
+        this.lineChart1.data.datasets[0].data.push(infCount);
+        this.lineChart1.data.datasets[1].data.push(newInfections);
         this.lineChart1.data.labels.push(curStep);
         this.lineChart1.update();
-        //this.lineChart2.update();
     }
     // transfer data from sim1 to visualisations in column2
     moveData() {
         this.linedata2 = this.lineChart1.data.datasets[0].data;
+        this.linedata4 = this.lineChart1.data.datasets[1].data;
         this.lineLabels =  this.lineChart1.data.labels;
         this.lineChart2.data.datasets[0].data = this.linedata2;
+        this.lineChart2.data.datasets[1].data = this.linedata4;
         this.lineChart2.data.labels = this.lineLabels;
         this.lineChart2.update();
 
         this.lineLabels = []; //clear labels for next sim
         this.lineChart1.data.datasets[0].data = [];
+        this.lineChart1.data.datasets[1].data = [];
         this.lineChart1.data.labels = [];
     }
 }
