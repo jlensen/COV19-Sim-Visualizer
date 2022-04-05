@@ -57,11 +57,12 @@ class Heatmaps {
         width: 700,
         height: 700,
         autosize: false,
+        autorange: 'reversed',
       },
     };
 
-    for ( var i = 0; i < yValues.length; i++ ) {
-      for ( var j = 0; j < xValues.length; j++ ) {
+    for ( var i = 0; i < xValues.length; i++ ) {
+      for ( var j = 0; j < yValues.length; j++ ) {
         var currentValue = zValues[i][j];
         if (currentValue != 0.0) {
           var textColor = 'white';
@@ -71,8 +72,8 @@ class Heatmaps {
         var result = {
           xref: 'x1',
           yref: 'y1',
-          x: xValues[j],
-          y: yValues[i],
+          x: xValues[i],
+          y: yValues[j],
           text: zValues[i][j],
           font: {
             family: 'Arial',
@@ -100,8 +101,10 @@ class Heatmaps {
         this.update[i][j] = this.totPlumes[i][j]/curStep;
       }
     }
-    
-    Plotly.restyle('heatmapDiv', 'z' , [this.update]);
+
+    let output = this.update[0].map((_, colIndex) => this.update.map(row => row[colIndex]));
+
+    Plotly.restyle('heatmapDiv', 'z' , [output]);
     //Plotly.relayout('heatmapDiv', test);
     //console.log(update.z);
   }
