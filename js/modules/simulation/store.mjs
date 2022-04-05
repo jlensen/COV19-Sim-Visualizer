@@ -207,6 +207,7 @@ class Store {
                     }
                     console.log("shelveserror", i)
                     this.blocked[i][j] = 1;
+                    this.diffusionCoeff[i][j] = 0;
                 }
             }
             //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).forEach((_, i) => {

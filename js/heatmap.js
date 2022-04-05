@@ -49,14 +49,14 @@ class Heatmaps {
       annotations: [],
       xaxis: {
         ticks: '',
-        side: 'top'
+        side: 'top',
       },
       yaxis: {
         ticks: '',
         ticksuffix: ' ',
         width: 700,
         height: 700,
-        autosize: false
+        autosize: false,
       },
     };
 
