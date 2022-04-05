@@ -18,7 +18,7 @@ let params = {
 
     CASHIERTIMEPERITEM : 1,
     BLOCKRANDOMSTEP: 0.8,
-    PROBSPREADPLUME : 1./3600,
+    PROBSPREADPLUME : 1./360,
 
     EXPOSURELIMIT : 1,
     // limits for maximum waiting time when a target from the shopping list is found

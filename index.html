@@ -40,17 +40,17 @@
                         <div class="col-sm-3">
                             <input type="n_cust" class="form-control" id="n_cust" placeholder="50" value="50">
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="cust_rate" class="col-sm-3 col-form-label">Customer Rate</label>
-                        <div class="col-sm-3">
-                            <input type="cust_rate" class="form-control" id="cust_rate" placeholder="0.1" value="0.1">
+                        <div class="form-group row">
+                            <label for="cust_rate" class="col-sm-3 col-form-label">Customer Rate</label>
+                            <div class="col-sm-3">
+                                <input type="cust_rate" class="form-control" id="cust_rate" placeholder="0.1" value="0.2">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="inf_rate" class="col-sm-3 col-form-label">Infection Rate</label>
-                        <div class="col-sm-3">
-                            <input type="inf_rate" class="form-control" id="inf_rate" placeholder="0.05" value="0.05">
+                        <div class="form-group row">
+                            <label for="inf_rate" class="col-sm-3 col-form-label">Infection Rate</label>
+                            <div class="col-sm-3">
+                                <input type="inf_rate" class="form-control" id="inf_rate" placeholder="0.20" value="0.20">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -58,11 +58,12 @@
                         <div class="col-sm-3">
                             <input type="n_shelves" class="form-control" id="n_shelves" placeholder="10" value="10">
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="n_steps" class="col-sm-3 col-form-label">Number of Steps</label>
-                        <div class="col-sm-3">
-                            <input type="n_steps" class="form-control" id="n_steps" placeholder="1000" value="1000">
+                        <div class="form-group row">
+                            <label for="n_steps" class="col-sm-3 col-form-label">Number of Steps</label>
+                            <div class="col-sm-3">
+                                <input type="n_steps" class="form-control" id="n_steps" placeholder="1000" value="800">
+                            </div>
+
                         </div>
                     </div>
                     <!--<div class="form-group row">
@@ -154,23 +155,18 @@
 </body>
 <footer>
 
-
-    <div class="chart-container" style="position: relative; float: left; height:40vh; width:49vw; margin-bottom:1vw">
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width:45vw; margin:0vw 1vw 0vw 1.5vw">
         <canvas id="vis" width="800" height="500"></canvas>
-       <!-- <script type="module" src="./js/visualisations.js"></script>-->
-        <button onclick="reset()">Reset graphs</button>
+        <button id="resetZoom" class="btn btn-primary" style="margin: 20px">Reset zoom</button>
     </div>
-    <div class="chart-container" style="position: relative; float: left; height:40vh; width: 49vw; margin-bottom:1vw">
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width: 45vw; margin:0vw 0vw 0vw 2.5vw">
         <canvas id="vis2" width="800" height="500"></canvas>
         <canvas id="overlay" width="800" height="500"></canvas>
     </div>
-        
-    <!--<script type="text/javascript" src="http://www.patrick-wied.at/static/heatmapjs/src/heatmap.js"></script> -->
-
-        <div id="heatmapDiv" style="position: relative; float: right; height:45vw; width:45vw; margin:1vw; margin-top:10vw">
+        <div id="heatmapDiv" style="position: relative; float: left; height:45vw; width:45vw; margin:12vw 2vw 0vw 1.5vw">
             <script type="module" src="./js/heatmap.js"></script>
         </div>
-        <div id="heatmapDiv2" style="position: relative; float: right; height:45vw; width:45vw; margin:1vw; margin-top:10vw">
+        <div id="heatmapDiv2" style="position: relative; float: left; height:45vw; width:45vw; margin:12vw 0vw 0vw 2.5vw">
             <script type="module" src="./js/heatmap.js"></script>
         </div>
         

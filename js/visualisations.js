@@ -1,7 +1,6 @@
 class Visualisations {
-    constructor(ctx, ctx2, sim) { //gets two canvas contexts and the simulation that is running
+    constructor(ctx, ctx2) { //gets two canvas contexts and the simulation that is running
 
-    
         this.linedata = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20)); //.sort();
         this.linedata2 = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20));
         this.lineLabels = [];
@@ -17,7 +16,7 @@ class Visualisations {
                 labels: this.lineLabels,
                 datasets: [{
                     fill: true,
-                    label: 'Infections over time',
+                    label: 'Infected people in the store',
                     data: this.linedata,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -52,7 +51,7 @@ class Visualisations {
                 labels: this.lineLabels,
                 datasets: [{
                     fill: true,
-                    label: 'Infections over time',
+                    label: 'Infected people in the store',
                     data: this.linedata2,
                     backgroundColor: [
                         'rgba(99, 255, 132, 0.2)',
@@ -80,14 +79,6 @@ class Visualisations {
             }
         });
 
-        function reset() {
-            lineChart1.options.scales.x.min = 0;
-            lineChart1.options.scales.x.max = 47;
-            lineChart1.update();
-            lineChart2.options.scales.x.min = 0;
-            lineChart2.options.scales.x.max = 47;
-            lineChart2.update();
-        }
                 // zooms the graph from point of clicking to 10 ticks further (x axis)
         function zoomIn(chart, mousePos1, mousePos2)
             {
@@ -96,6 +87,15 @@ class Visualisations {
             chart.options.scales.x.max = mousePos2;
             chart.update();
         }
+    }
+    
+    resetZoom() {
+        this.lineChart1.options.scales.x.min = 0;
+        this.lineChart1.options.scales.x.max = this.lineChart1.data.labels.slice(-1);
+        this.lineChart1.update();
+        this.lineChart2.options.scales.x.min = 0;
+        this.lineChart2.options.scales.x.max = this.lineChart2.data.labels.slice(-1);
+        this.lineChart2.update();
     }
 
     frameUpdate(infCount, curStep) {
@@ -113,15 +113,15 @@ class Visualisations {
     // transfer data from sim1 to visualisations in column2
     moveData() {
         this.linedata2 = this.lineChart1.data.datasets[0].data;
-        this.labels =  this.lineChart1.data.labels;
+        this.lineLabels =  this.lineChart1.data.labels;
         this.lineChart2.data.datasets[0].data = this.linedata2;
-        this.lineChart2.data.labels = this.labels;
+        this.lineChart2.data.labels = this.lineLabels;
         this.lineChart2.update();
 
-        this.labels = []; //clear labels for next sim
+        this.lineLabels = []; //clear labels for next sim
         this.lineChart1.data.datasets[0].data = [];
         this.lineChart1.data.labels = [];
     }
 }
-
 export default Visualisations;
+

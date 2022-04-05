@@ -6,7 +6,8 @@ import { UPDATE_PRIORITY ,Ticker, Container, Graphics } from '../pixi/pixi.mjs';
 class Simulation {
 
     constructor(seed, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
-        nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, app, scale, vis) {
+        nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, genStore = false, app, scale, vis, hmp) {
+
         // Apparently javascript random does not accept a seed
         // So for this we need to find something or implement it ourselves
 
@@ -23,6 +24,7 @@ class Simulation {
 
         // VISUALISATIONS
         this.vis = vis;
+        this.hmp = hmp;
 
         // PARAMETERS
         this.seed = seed;
@@ -159,8 +161,8 @@ class Simulation {
                 this.simStep();
                 this.renderCustomers();
             } else {
-                this.ticker.destroy();
-                this.ticker = new Ticker();
+                this.stopSim();
+               // this.ticker.destroy(); this is double up with stopping sim
             }
         }
 
@@ -245,9 +247,15 @@ class Simulation {
             if (this.nCustomers && Math.random() < this.probNewCustomer)
                 this.newCustomer();
         }
-        // visualisation code
+
+        // visualisation updates
         if (this.currentStep % 10 === 0)
             this.vis.frameUpdate(this.infectedCount, this.currentStep);
+        // heatmap updates
+        if (this.currentStep % 10 === 0) {
+            this.hmp.frameUpdate(this.store.plumes, this.currentStep);
+        }
+
 
         if (this.nCustomers == 0 && this.customers.length == 0) {
             // end condition, do whatever we want?
@@ -260,6 +268,8 @@ class Simulation {
     getStats() {
         return {
             infections: this.infectedCount,
+            plumes: this.store.plumes,
+            size: this.scale,
             step : this.currentStep,
             custCount : this.customers.length,
             totExposure : this.exposureDuringTimeStep[this.currentStep]
