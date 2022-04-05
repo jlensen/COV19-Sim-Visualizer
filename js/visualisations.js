@@ -16,7 +16,7 @@ class Visualisations {
                 labels: this.lineLabels,
                 datasets: [{
                     fill: true,
-                    label: 'Infected people in the store',
+                    label: 'Number of infected people in the store',
                     data: this.linedata,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -51,7 +51,7 @@ class Visualisations {
                 labels: this.lineLabels,
                 datasets: [{
                     fill: true,
-                    label: 'Infected people in the store',
+                    label: 'Number of  infected people in the store',
                     data: this.linedata2,
                     backgroundColor: [
                         'rgba(99, 255, 132, 0.2)',
