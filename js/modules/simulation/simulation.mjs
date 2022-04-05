@@ -5,7 +5,7 @@ import { UPDATE_PRIORITY ,Ticker, Container, Graphics } from '../pixi/pixi.mjs';
 
 class Simulation {
 
-    constructor(seed, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
+    constructor(seed = 1, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
         nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, app, scale, vis) {
         // Apparently javascript random does not accept a seed
         // So for this we need to find something or implement it ourselves
@@ -26,6 +26,8 @@ class Simulation {
 
         // PARAMETERS
         this.seed = seed;
+        // alea is the faster pseudorandom generator from seedrandom.js
+        this.randomGen = new alea(this.seed);
         this.maxSteps = maxSteps;
         this.useDiffusion = useDiffusion;
         this.nCustomers = nCustomers;
@@ -85,7 +87,7 @@ class Simulation {
         this.nCustomers -= 1;
 
         let infected = 0;
-        let rand = Math.random();
+        let rand = this.randomGen();
         rand < this.probInfCustomer ? infected = 1 : infected = 0;
         let newCustomer = new SmartCustomer(this.store.entrance[0], this.store.entrance[1], infected, params.PROBSPREADPLUME);
         newCustomer.initShoppingList(this.store, params.MAXSHOPPINGLIST);
@@ -115,7 +117,7 @@ class Simulation {
     }
 
     genStore() {
-        this.store = new Store(1.0);
+        this.store = new Store(1.0, this.randomGen);
         this.store.genMap(this.Lx, this.Ly);
         this.store.initializeShelvesRegular(this.nShelves);
         this.store.createStaticGraph();
@@ -123,7 +125,7 @@ class Simulation {
     }
 
     loadStore(mapObject) {
-        this.store = new Store(1.0);
+        this.store = new Store(1.0, this.randomGen);
         this.store.loadMap(mapObject);
         this.store.createStaticGraph();
     }
@@ -238,11 +240,11 @@ class Simulation {
                 if (e > 0)
                     this.store.plumes[i] -= 1;
             });
-            if (this.nCustomers > 0 && Math.random() < this.probNewCustomer)
+            if (this.nCustomers > 0 && this.randomGen() < this.probNewCustomer)
                 this.newCustomer();
         } else if (this.updatePlumes && this.useDiffusion) {
             this.store.updateDiffusion();
-            if (this.nCustomers && Math.random() < this.probNewCustomer)
+            if (this.nCustomers && this.randomGen() < this.probNewCustomer)
                 this.newCustomer();
         }
         // visualisation code

@@ -1,10 +1,11 @@
 import {params, randRange} from './util.mjs'
 
 class Store {
-    constructor(dx) {
+    constructor(dx, randomGen) {
         this.dt = 1.0;
         this.dx = dx;
         this.dy = dx;
+        this.randomGen = randomGen;
     }
 
     loadMap(mapObject) {
@@ -109,11 +110,11 @@ class Store {
     }
 
     addPlume(plumeDuration) {
-        let plumePosx = randRange(1, this.Lx - 1);
-        let plumePosy = randRange(1, thi.Ly - 1);
+        let plumePosx = randRange(1, this.Lx - 1, this.randomGen);
+        let plumePosy = randRange(1, thi.Ly - 1, this.randomGen);
         while (this.blocked[plumePosx][plumePosy] == 1 || this.plumes[plumePosx][plumePosy] > 0) {
-            plumePosx = randRange(1, this.Lx - 1);
-            plumePosy = randRange(1, thi.Ly - 1);
+            plumePosx = randRange(1, this.Lx - 1, this.randomGen);
+            plumePosy = randRange(1, thi.Ly - 1, this.randomGen);
         }
         this.plumes[plumePosx][plumePosy] = plumeDuration;
         return [plumePosx, plumePosy];
@@ -176,20 +177,20 @@ class Store {
         let axis;
         let shelfSize;
         while (placed < N) {
-            if (Math.random() < 0.5) {
+            if (this.randomGen() < 0.5) {
                 shelfSize = [II, JJ]
                 axis = true;
             } else {
                 shelfSize = [JJ, II];
                 axis = false;
             }
-            let shelfPosx = randRange(1, this.Lx - shelfSize[0] - 1);
-            let shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1);
+            let shelfPosx = randRange(1, this.Lx - shelfSize[0] - 1, this.randomGen);
+            let shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1, this.randomGen);
 
             //while ((this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0)) {
             while (this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0) > 0) {
-                shelfPosx = randRange(1, this.Lx + shelfSize[0] - 1);
-                shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1);
+                shelfPosx = randRange(1, this.Lx + shelfSize[0] - 1, this.randomGen);
+                shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1, this.randomGen);
                 tries += 1;
                 if (tries > 1e4) {
                     //this.blockedShelves = [...this.blocked];
@@ -215,7 +216,7 @@ class Store {
             placed += 1;
 
             // TODO don't know if this is the right way to choose
-            let direction = Math.random() > 0.5 ? 1 : -1;
+            let direction = this.randomGen() > 0.5 ? 1 : -1;
             while (placed < N) {
                 if (axis) {
                     shelfPosy += direction * (DD + JJ);

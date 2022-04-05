@@ -31,8 +31,8 @@ let params = {
 }
 
 export {params};
-export function randRange(low, high) {
-    return Math.floor(Math.random() * (high - low) + low);
+export function randRange(low, high, randomGen) {
+    return Math.floor(randomGen() * (high - low) + low);
 };
 
 export function checkCoordIn2DArray(x, y, array) {
@@ -44,11 +44,11 @@ export function checkCoordIn2DArray(x, y, array) {
     return false;
 };
 
-export function permuteArray(array) {
+export function permuteArray(array, randomGen) {
     let copy = [...array]
     let result = []
     while (copy.length > 0) {
-        let index = randRange(0, copy.length)
+        let index = randRange(0, copy.length, randomGen)
         result.push(copy[index]);
         copy.splice(index, 1);
     }

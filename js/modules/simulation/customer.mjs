@@ -63,7 +63,7 @@ class Customer {
     }
 
     spreadViralPlumes(store) {
-        let sample = Math.random();
+        let sample = store.randomGen();
         if (sample < this.probSpreadPlume && !store.useDiffusion) {
             store.plumes[this.x][this.y] = params.PLUMELIFETIME;
         } else if (store.useDiffusion) {
@@ -77,18 +77,18 @@ class Customer {
     }
 
     initShoppingList(store, maxN) {
-        let targetsDrawn = randRange(0, maxN) + 1;
+        let targetsDrawn = randRange(0, maxN, store.randomGen) + 1;
         while (this.shoppingList.length < targetsDrawn) {
-            let tx = randRange(0, store.Lx);
+            let tx = randRange(0, store.Lx, store.randomGen);
             // from 1 so customers don't run into other customers visiting cashiers
-            let ty = randRange(1, store.Ly);
+            let ty = randRange(1, store.Ly, store.randomGen);
             while (store.blocked[tx][ty] == 1 || checkCoordIn2DArray(tx, ty, this.shoppingList) || checkCoordIn2DArray(tx, ty, store.exit)
             || (store.entrance[0] == tx && store.entrance[1] == ty) || (tx < 1 || ty < 1) || (tx < 3 && ty < 3) ||
             !(store.blockedShelves[tx][ty - 1] == 1 || (ty + 1 < store.Ly && store.blockedShelves[tx][ty + 1] == 1) ||
             (tx - 1 >= 0 || store.blockedShelves[tx - 1][ty] == 1) || (tx + 1 < store.Lx && (store.blockedShelves[tx + 1][ty] == 1 && store.blockedShelves[tx + 1][ty] != undefined)))) {
                 store.blocked[tx][ty] == 1
-                tx = randRange(0, store.Lx);
-                ty = randRange(1, store.Ly);
+                tx = randRange(0, store.Lx, store.randomGen);
+                ty = randRange(1, store.Ly, store.randomGen);
             }
             this.addTarget([tx, ty]);
         }
@@ -103,7 +103,7 @@ class Customer {
     }
 
     takeRandomStep(store) {
-        let permDir = permuteArray(DIRECTIONS);
+        let permDir = permuteArray(DIRECTIONS, store.randomGen);
         for (let i = 0; i < permDir.length; i++) {
             let step = permDir[i];
             let tmpPos = [parseInt(this.x) + parseInt(step[0]), parseInt(this.y) + parseInt(step[1])];
@@ -179,7 +179,7 @@ class SmartCustomer extends Customer {
 
         if (this.itemFound()) {
             let itemPos = this.shoppingList.shift();
-            this.waitingTime = randRange(params.MINWAITINGTIME, params.MAXWAITINGTIME);
+            this.waitingTime = randRange(params.MINWAITINGTIME, params.MAXWAITINGTIME, store.randomGen);
             return itemPos;
         }
 
@@ -216,7 +216,7 @@ class SmartCustomer extends Customer {
             // sanity check for sims with small environments
             store.createStaticGraph();
             this.path = null;
-        } else if ((this.headingForExit == 0 && Math.random() < params.BLOCKRANDOMSTEP) || Math.random() < params.BLOCKRANDOMSTEP * 1e-2) {
+        } else if ((this.headingForExit == 0 && store.randomGen() < params.BLOCKRANDOMSTEP) || store.randomGen() < params.BLOCKRANDOMSTEP * 1e-2) {
             this.takeRandomStep(store);
             this.path = null;
         }
