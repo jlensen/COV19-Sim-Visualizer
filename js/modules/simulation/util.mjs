@@ -1,7 +1,7 @@
 let params = {
     // some params related to the exits
-    NEXITS : 5, 
-    CASHIERD : 14, 
+    NEXITS : 3, 
+    CASHIERD : 2, 
     ENTRANCEPOS : 0,
     EXITPOS : 1,
 
@@ -43,3 +43,14 @@ export function checkCoordIn2DArray(x, y, array) {
     }
     return false;
 };
+
+export function permuteArray(array) {
+    let copy = [...array]
+    let result = []
+    while (copy.length > 0) {
+        let index = randRange(0, copy.length)
+        result.push(copy[index]);
+        copy.splice(index, 1);
+    }
+    return result;
+}
