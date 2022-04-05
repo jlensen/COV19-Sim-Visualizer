@@ -113,7 +113,7 @@ class Visualisations {
     // transfer data from sim1 to visualisations in column2
     moveData() {
         this.linedata2 = this.lineChart1.data.datasets[0].data;
-        this.lineLabels =  this.lineChart1.data.labels;
+        this.lineLabels = this.lineChart1.data.labels;
         this.lineChart2.data.datasets[0].data = this.linedata2;
         this.lineChart2.data.labels = this.lineLabels;
         this.lineChart2.update();
