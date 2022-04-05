@@ -15,7 +15,7 @@ class Heatmaps {
     var z7 = new Array(9).fill().map(() => Math.random());
     var z8 = new Array(9).fill().map(() => Math.random());
     //console.log(z0);
-
+    this.tempStep = 0;
     this.totPlumes = new Array(this.Lx);
     for (let i = 0; i < this.totPlumes.length; i++) {
         this.totPlumes[i] = new Array(this.Ly).fill(0);
@@ -27,6 +27,10 @@ class Heatmaps {
     this.output = new Array(this.Lx);
     for (let i = 0; i < this.output.length; i++) {
         this.output[i] = new Array(this.Ly).fill(0);
+    }
+    this.cumTotPlumes = new Array(this.Lx);
+    for (let i = 0; i < this.cumTotPlumes.length; i++) {
+        this.cumTotPlumes[i] = new Array(this.Ly).fill(0);
     }
     //console.log(this.totPlumes);
 
@@ -102,7 +106,7 @@ class Heatmaps {
     for (let i = 0; i < plumes.length; i++) {
       for (let j = 0; j < plumes[i].length; j++) {
         this.totPlumes[i][j] += plumes[i][j];
-        this.update[i][j] = this.totPlumes[i][j]/curStep;
+        this.update[i][j] = this.totPlumes[i][j]/(curStep - this.tempStep);
       }
     }
 
@@ -114,13 +118,21 @@ class Heatmaps {
   }
 
   moveData() {
-    Plotly.restyle('heatmapDiv2', 'z', [this.output])
+    for (let i = 0; i < this.cumTotPlumes.length; i++) {
+      for (let j = 0; j < this.cumTotPlumes[i].length; j++) {
+        this.cumTotPlumes[i][j] += this.output[i][j];
+      }
+    }
+
+    Plotly.restyle('heatmapDiv2', 'z', [this.cumTotPlumes])
 
     for (let i = 0; i < this.totPlumes.length; i++) {
       for (let j = 0; j < this.totPlumes[i].length; j++) {
         this.totPlumes[i][j] = 0;
       }
     }
+
+    Plotly.restyle('heatmapDiv', 'z', [this.totPlumes])
   }
 }
 
