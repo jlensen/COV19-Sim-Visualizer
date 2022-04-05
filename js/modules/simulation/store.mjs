@@ -231,6 +231,7 @@ class Store {
                     for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
                         for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
                             this.blocked[i][j] = 1;
+                            this.diffusionCoeff[i][j] = 0;
                         }
                     }
                     placed += 1;

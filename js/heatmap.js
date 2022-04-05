@@ -20,6 +20,10 @@ class Heatmaps {
     for (let i = 0; i < this.totPlumes.length; i++) {
         this.totPlumes[i] = new Array(this.Ly).fill(0);
     }
+    this.update = new Array(this.Lx);
+    for (let i = 0; i < this.update.length; i++) {
+        this.update[i] = new Array(this.Ly).fill(0);
+    }
     //console.log(this.totPlumes);
 
     var xValues = ['A', 'B', 'C', 'D', 'E'];
@@ -53,7 +57,7 @@ class Heatmaps {
         width: 700,
         height: 700,
         autosize: false
-      }
+      },
     };
 
     for ( var i = 0; i < yValues.length; i++ ) {
@@ -88,13 +92,16 @@ class Heatmaps {
     Plotly.newPlot('heatmapDiv2', data, layout);
   }
   frameUpdate(plumes, curStep) {
+    
+
     for (let i = 0; i < plumes.length; i++) {
       for (let j = 0; j < plumes[i].length; j++) {
-        this.totPlumes[i][j] += plumes[i][j]/curStep;
+        this.totPlumes[i][j] += plumes[i][j];
+        this.update[i][j] = this.totPlumes[i][j]/curStep;
       }
     }
-    var update = this.totPlumes;
-    Plotly.restyle('heatmapDiv', 'z' , [update]);
+    
+    Plotly.restyle('heatmapDiv', 'z' , [this.update]);
     //Plotly.relayout('heatmapDiv', test);
     //console.log(update.z);
   }
