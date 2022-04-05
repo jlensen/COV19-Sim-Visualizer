@@ -1,6 +1,7 @@
 class Visualisations {
     constructor(ctx, ctx2) { //gets two canvas contexts and the simulation that is running
 
+        Chart.defaults.font.size = 20;
         this.linedata = [];
         this.linedata2 = [];
         this.linedata3 = [];
@@ -52,6 +53,9 @@ class Visualisations {
 
                     y: {
                         beginAtZero: true
+                    },
+                    x: {
+                        beginAtZero: true
                     }
                 }
             }
@@ -98,6 +102,9 @@ class Visualisations {
                 scales: {
                     y: {
                         beginAtZero: true
+                    },
+                    x: {
+                        beginAtZero: true
                     }
                 }
             }
@@ -121,6 +128,9 @@ class Visualisations {
     }
 
     frameUpdate(infCount, newInfections,curStep) {
+        if ( curStep < this.lineChart1.data.labels[-1]) {
+            this.lineChart1.update();
+        }
         this.lineChart1.data.datasets[0].data.push(infCount);
         this.lineChart1.data.datasets[1].data.push(newInfections);
         this.lineChart1.data.labels.push(curStep);

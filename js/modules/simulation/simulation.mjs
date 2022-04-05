@@ -179,6 +179,7 @@ class Simulation {
             this.ticker.stop();
             this.ticker.destroy();
         }
+        this.currentStep = 0;
         this.ticker = new Ticker();
     }
 
@@ -249,7 +250,7 @@ class Simulation {
         }
 
         // visualisation updates
-        if (this.currentStep % 2 === 0) {
+        if (this.currentStep % 2 === 0 || this.currentStep == 1) {
             var totNewInfections = 0;
             this.customers.forEach(c => {
                 if (c.newInfection) {
@@ -258,7 +259,7 @@ class Simulation {
             });
             this.vis.frameUpdate(this.infectedCount, totNewInfections, this.currentStep);
         }
-        if (this.currentStep % 20 === 0) {
+        if (this.currentStep % 20 === 0 || this.currentStep == 1) {
             this.hmp.frameUpdate(this.store.plumes, this.currentStep);
         }
 
