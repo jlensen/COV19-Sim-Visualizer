@@ -7,6 +7,7 @@ class Simulation {
 
     constructor(seed, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
         nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, genStore = false, app, scale, vis, hmp) {
+
         // Apparently javascript random does not accept a seed
         // So for this we need to find something or implement it ourselves
 
@@ -37,7 +38,6 @@ class Simulation {
         this.Ly = Ly;
         this.dx = dx;
         this.nShelves = nShelves;
-        this.genStore = genStore;
 
         //this.initState();
     }
@@ -49,17 +49,6 @@ class Simulation {
         this.currentStep = 0;
         this.infectedCount = 0;
         this.customers = [];
-
-
-        // INITIALIZATION
-        this.store = new Store(this.Lx, this.Ly, this.dx);
-        if (this.genStore) {
-            this.store.initializeShelvesRegular(this.nShelves);
-        } else {
-            // load some store defined somewhere
-        }
-        this.store.createStaticGraph();
-        this.store.initializeDoors();
 
         if (this.nCustomers == 1) {
 			this.probInfCustomer = -1;
@@ -121,7 +110,24 @@ class Simulation {
             this.s_graphics.drawRect(this.scale * this.store.exit[i][0], this.scale * this.store.exit[i][1], this.scale, this.scale);
             this.s_graphics.endFill();
         }
+        this.s_graphics.beginFill(0x9ad94e);
+        this.s_graphics.drawRect(this.scale * this.store.entrance[0], this.scale * this.store.entrance[1], this.scale, this.scale);
+        this.s_graphics.endFill();
         this.app.render(this.stage);
+    }
+
+    genStore() {
+        this.store = new Store(1.0);
+        this.store.genMap(this.Lx, this.Ly);
+        this.store.initializeShelvesRegular(this.nShelves);
+        this.store.createStaticGraph();
+        this.store.initializeDoors();
+    }
+
+    loadStore(mapObject) {
+        this.store = new Store(1.0);
+        this.store.loadMap(mapObject);
+        this.store.createStaticGraph();
     }
 
     renderCustomers() {
@@ -165,6 +171,7 @@ class Simulation {
         
         // vis code
         this.vis.moveData();
+        console.log(this.store.graph)
     }
 
     stopSim() {
@@ -191,7 +198,7 @@ class Simulation {
         this.store.initializeExposureDuringTimeStep()
         this.currentStep++;
         if (this.customersHeadExit > this.maxQueue)
-            this.maxQueue = customersHeadExit
+            this.maxQueue = this.customersHeadExit
 
         let customersExit = [];
         this.customersHeadExit = 0;

@@ -1,37 +1,56 @@
 import {params, randRange} from './util.mjs'
 
 class Store {
-    constructor(Lx, Ly, dx) {
-        this.Lx = Lx;
-        this.Ly = Ly;
+    constructor(dx) {
         this.dt = 1.0;
         this.dx = dx;
         this.dy = dx;
+    }
+
+    loadMap(mapObject) {
+        this.Lx = mapObject.grid.length;
+        this.Ly = mapObject.grid.length;
+        this.blocked = mapObject.grid;
+        this.blockedShelves = mapObject.grid;
+        this.invLxLy = 1.0 / (this.Lx * this.Ly);
+        this.useDiffusion = false;
+        this.entrance = mapObject.entrance;
+        this.exit = mapObject.exits;
+        this.exitActive = new Array(mapObject.exits.length).fill(0);
+        this.graph;
+        this.initState();
+    }
+
+    genMap(Lx, Ly) {
+        this.Lx = Lx;
+        this.Ly = Ly;
         //this.blocked = null
         this.blocked = new Array(this.Lx);
         for (let i = 0; i < this.blocked.length; i++) {
             this.blocked[i] = new Array(this.Ly).fill(0);
         }
         this.blockedShelves = null;
-        this.invLxLy = 1.0 / (Lx * Ly);
+        this.invLxLy = 1.0 / (this.Lx * this.Ly);
         this.entrance = null;
-        this.useDiffusion = null;
+        this.useDiffusion = false;
         this.exit = [];
         this.exitActive = new Array(params.NEXITS).fill(0);
         this.graph;
+        this.initState();
+    }
 
-        // TODO check if we need all this, seems a bit useless to have it three times
+    initState() {
         this.plumes = new Array(this.Lx);
         for (let i = 0; i < this.plumes.length; i++) {
-            this.plumes[i] = new Array(this.Ly).fill(0);
+            this.plumes[i] = new Array(this.Ly).fill(0.0);
         }
         this.plumesNew = new Array(this.Lx);
         for (let i = 0; i < this.plumesNew.length; i++) {
-            this.plumesNew[i] = new Array(this.Ly).fill(0);
+            this.plumesNew[i] = new Array(this.Ly).fill(0.0);
         }
         this.plumesIntegrated = new Array(this.Lx);
         for (let i = 0; i < this.plumesIntegrated.length; i++) {
-            this.plumesIntegrated[i] = new Array(this.Ly).fill(0);
+            this.plumesIntegrated[i] = new Array(this.Ly).fill(0.0);
         }
         this.diffusionCoeff = new Array(this.Lx);
         for (let i = 0; i < this.diffusionCoeff.length; i++) {
@@ -50,14 +69,15 @@ class Store {
 
     // TODO check this, exposure seems to be high
     updateDiffusion() {
-        this.plumesNew = [...this.plumes];
+        this.plumesNew = this.plumes.map((a) => a.slice())
 
         // TODO lots of loops, maybe we can combine some of them?
         for (let i = 1; i < this.plumesNew.length; i++) {
             for (let j = 0; j < this.plumesNew[i].length; j++) {
-                this.plumesNew[i][j] += this.diffusionCoeff[i][j] * this.diffusionCoeff[i-1][j] * this.dt * (this.plumes[i-1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF;
+                this.plumesNew[i][j] = this.plumesNew[i][j] + (this.diffusionCoeff[i][j] * this.diffusionCoeff[i-1][j] * this.dt * (this.plumes[i-1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF);
             }
         }
+       
 
         for (let i = 0; i < this.plumesNew.length - 1; i++) {
             for (let j = 0; j < this.plumesNew[i].length; j++) {
@@ -85,7 +105,6 @@ class Store {
                 this.plumesIntegrated[i][j] += this.plumesNew[i][j]
             }
         }
-
         this.plumes = this.plumesNew;
     }
 
@@ -107,7 +126,7 @@ class Store {
     }
 
     getCoordFromIndex(idx) {
-        return [Math.floor(idx / this.Lx).toFixed(), idx % this.Lx];
+        return [Math.floor(idx / this.Lx), idx % this.Lx];
     }
 
     getIndexFromCoord(coord) {
@@ -115,24 +134,12 @@ class Store {
     }
 
     getExit() {
-        //let exitInd = Math.min(this.exitActive);
-        let exitInd = this.findMinExit(this.exitActive);
+        let exitInd = this.exitActive.indexOf(Math.min(...this.exitActive));
+        console.log(this.exitActive)
         console.log("exit is: " + exitInd);
         this.exitActive[exitInd] += 1;
         let exit = this.exit[exitInd];
         return [parseInt(exit[0]), parseInt(exit[1])];
-    }
-
-    findMinExit(exits) {
-        let minIdx = 0;
-        let min = exits[0][0] + exits[0][1];
-        for (let i = 1; i < exits; i++) {
-            let sum = exits[i][0] + exits[i][1];
-            if (sum < min)
-                min = sum;
-                minIdx = i;
-        }
-        return minIdx;
     }
 
     updateQueue(exitPos) {
@@ -141,7 +148,6 @@ class Store {
                 this.exitActive[i] -= 1;
                 break;
         }
-        //this.exitActive[this.exit.find(exitPos)] -= 1;
     }
 
     createStaticGraph() {
@@ -150,13 +156,11 @@ class Store {
         let blockedNodesList = [].concat.apply([], this.blocked);
 
         for (let i = 0; i < totNodes; i++) {
-            if (blockedNodesList[i]==0 && blockedNodesList[i+1] == 0 && this.graph.areConnected(i,i + 1) == false && i + 1 % this.Lx != 0) {
+            if (blockedNodesList[i] == 0 && blockedNodesList[i+1] == 0 && this.graph.areConnected(i,i + 1) == false && (i + 1) % this.Lx != 0) {
                 this.graph.addEdge(i, i + 1);
             }
-        }
 
-        for (let i = 0; i < totNodes; i++) {
-            if (blockedNodesList[i]==0 && blockedNodesList[i+this.Lx] == 0 && this.graph.areConnected(i,i + this.Lx) == false) {
+            if (blockedNodesList[i] == 0 && blockedNodesList[i+this.Lx] == 0 && this.graph.areConnected(i,i + this.Lx) == false) {
                 this.graph.addEdge(i, i + this.Lx);
             }
         }
@@ -201,6 +205,7 @@ class Store {
                     if (i < 0 || j < 0) {
                         continue;
                     }
+                    console.log("shelveserror", i)
                     this.blocked[i][j] = 1;
                 }
             }
@@ -258,7 +263,7 @@ class Store {
         }
         //console.log(this.exit)
         // TODO do we just pop off the last element here? they slice until last element
-        this.exit.pop();
+        //this.exit.pop();
     }
 }
 

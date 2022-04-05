@@ -127,8 +127,8 @@ class Customer {
             if (this.x == store.exit[i][0] && this.y == store.exit[i][1]) {
                 return true;
             }
-            return false;
         }
+        return false;
     }
 }
 
@@ -138,7 +138,6 @@ class SmartCustomer extends Customer {
     }
 
     takeStep(store) {
-        this.timeInStore += 1;
         if (store.plumes[this.x][this.y] > 0 && !store.useDiffusion) {
             this.exposure += 1;
         } else if (store.plumes[this.x][this.y] > 0 && store.useDiffusion) {
@@ -164,12 +163,15 @@ class SmartCustomer extends Customer {
         // heading for exit
         if (this.shoppingList.length == 0) {
             if (!this.atExit(store)) {
+                console.log("not at exit", this.waitingTime)
                 this.shoppingList.push(store.getExit());
                 this.headingForExit = 1;
             } else if (this.atExit(store) && this.cashierWaitingTime > 0) {
+                console.log("now just waiting")
                 this.cashierWaitingTime -= 1;
                 return [this.x, this.y]; 
             } else {
+                console.log("yes can exit")
                 store.blocked[this.x][this.y] = 0;
                 return [-1, -1];
             }
@@ -198,7 +200,6 @@ class SmartCustomer extends Customer {
         if (!(this.path.length > 0)) {
             console.log(this.x, this.y, this.shoppingList, this.headingForExit);
         }
-
         let step = store.getCoordFromIndex(this.path[0]);
         // check that step is possible
         if (store.blocked[step[0]][step[1]] == 0) {
