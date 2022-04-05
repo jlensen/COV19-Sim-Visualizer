@@ -91,8 +91,8 @@ class Heatmaps {
     Plotly.newPlot('heatmapDiv', data, layout);
     Plotly.newPlot('heatmapDiv2', data, layout);
   }
+
   frameUpdate(plumes, curStep) {
-    
 
     for (let i = 0; i < plumes.length; i++) {
       for (let j = 0; j < plumes[i].length; j++) {

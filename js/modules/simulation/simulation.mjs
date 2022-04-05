@@ -5,7 +5,7 @@ import { UPDATE_PRIORITY ,Ticker, Container, Graphics } from '../pixi/pixi.mjs';
 
 class Simulation {
 
-    constructor(seed, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
+    constructor(seed, Lx, Ly, nShelves, nCustomers = 2, probNewCustomer = 0.1, probInfCustomer = 0.05,
         nPlumes = 20, maxSteps = 1000, useDiffusion = true, dx = 1.0, genStore = false, app, scale, vis, hmp) {
 
         // Apparently javascript random does not accept a seed
