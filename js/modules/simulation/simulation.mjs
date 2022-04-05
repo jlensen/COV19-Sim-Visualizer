@@ -215,8 +215,6 @@ class Simulation {
             }
         });
 
-        // TODO review this later, unsure if it is right
-        // for some reason we stop before the last element?
         for (let j = customersExit.length - 1; j >= 0; j--) {
             // we loop in reverse so we can remove indexes without problems
             let leavingCustomer = this.customers.splice(customersExit[j], 1)[0];
@@ -231,7 +229,7 @@ class Simulation {
             this.timeSpent[this.customerNow] = tx;
             this.customerInfected[this.customerNow] = ty;
             this.customerNow += 1;
-           // console.log(this.stepStr);
+            console.log(this.stepStr);
 
         }
 

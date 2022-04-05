@@ -138,6 +138,8 @@ class SmartCustomer extends Customer {
     }
 
     takeStep(store) {
+        this.timeInStore++;
+
         if (store.plumes[this.x][this.y] > 0 && !store.useDiffusion) {
             this.exposure += 1;
         } else if (store.plumes[this.x][this.y] > 0 && store.useDiffusion) {

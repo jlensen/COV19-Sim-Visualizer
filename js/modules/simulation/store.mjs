@@ -145,9 +145,10 @@ class Store {
 
     updateQueue(exitPos) {
         for (let i = 0; i < this.exit.length; i++) {
-            if (this.exit[i][0] == exitPos[0] && this.exit[i][1] == exitPos[1])
+            if (this.exit[i][0] == exitPos[0] && this.exit[i][1] == exitPos[1]) {
                 this.exitActive[i] -= 1;
-                break;
+                return;
+            }
         }
     }
 
