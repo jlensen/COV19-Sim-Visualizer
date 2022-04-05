@@ -108,6 +108,9 @@ class Simulation {
             this.s_graphics.drawRect(this.scale * this.store.exit[i][0], this.scale * this.store.exit[i][1], this.scale, this.scale);
             this.s_graphics.endFill();
         }
+        this.s_graphics.beginFill(0x9ad94e);
+        this.s_graphics.drawRect(this.scale * this.store.entrance[0], this.scale * this.store.entrance[1], this.scale, this.scale);
+        this.s_graphics.endFill();
         this.app.render(this.stage);
     }
 
@@ -166,6 +169,7 @@ class Simulation {
         
         // vis code
         this.vis.moveData();
+        console.log(this.store.graph)
     }
 
     stopSim() {
