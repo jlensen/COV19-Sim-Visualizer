@@ -81,7 +81,7 @@
                             <button id="loadbtn" class="btn btn-primary">Simulate</button>
                             <button id="stopbtn" class="btn btn-primary">Stop</button>
                             <button id="genbtn" class="btn btn-primary">Generate Store</button>
-                            <!-- butto nfor store editor modal -->
+                            <!-- button for store editor modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal"
                                 data-target="#staticBackdrop">
                                 Store editor
@@ -112,7 +112,7 @@
                                 <div id="buttons" class="col-md-3 ml-auto">
                                     <div class="mb-3">
                                         <p>Store size (sets width and height): </p>
-                                        <input id="storesize" class="form-control" type="number" placeholder="max 100">
+                                        <input id="storesize" class="form-control" type="number" min="0" max="100" placeholder="max 100">
                                     </div>
                                     <div class="mb-3">
                                         <button id="draw" class="btn btn-primary" data-bs-toggle="button"
@@ -120,7 +120,7 @@
                                         <select id="objectSelect" class="form-select"
                                             aria-label="Default select example">
                                             <option selected value="1">Shelf</option>
-                                            <option value="2">Entrance</option>
+                                            <option value="2">Entrance (Max 1)</option>
                                             <option value="3">Exit</option>
                                         </select>
                                     </div>
@@ -135,6 +135,9 @@
                                     <div class="mb-3">
                                         <button id="zoomout" class="btn btn-primary"><i
                                                 class="bi bi-zoom-out"></i></button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <p>Hold right-click for panning</p>
                                     </div>
                                 </div>
                             </div>

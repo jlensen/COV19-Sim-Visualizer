@@ -4,16 +4,18 @@ import * as PIXI from './modules/pixi/pixi.mjs'
 import Visualisations from './visualisations.js'
 
 
-let simapp = new PIXI.Renderer({ width: 300, height: 300, backgroundColor: 0x1099bb });
+let simapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
 simapp.render(new PIXI.Container);
 var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'), sim);
 var sim = new Simulation(0, 20, 20, 10, 50, 0.1, 0.1, 20, 1000, true, 1.0, simapp, 15, vis);
 document.getElementById("sim").appendChild(simapp.view);
 
-let editorapp = new PIXI.Renderer({ width: 700, height: 700, backgroundColor: 0x1099bb });
+let editordiv = document.getElementById("editor")
+let editorapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
 let editor = new Editor(editorapp, 35);
 editor.setStoresize(20, 20);
-document.getElementById("editor").appendChild(editorapp.view);
+editordiv.appendChild(editorapp.view)
+//document.getElementById("editor").appendChild(editorapp.view);
 
 // Editor functionality
 editorapp.view.addEventListener('contextmenu', (e) => {
@@ -59,10 +61,27 @@ document.getElementById("genbtn").addEventListener("click", () => {
     sim.renderStore();
 })
 
+
 document.getElementById("usemapbtn").addEventListener("click", () => {
     sim.loadStore(editor.getMapObject());
     sim.initState();
     sim.renderStore();
+})
+
+// resize canvas for sim and editor when page resizes
+window.addEventListener("resize", () => {
+    editorapp.resize(0.3 * document.body.clientWidth, 0.3 * document.body.clientWidth);
+    editor.scale = Math.floor((0.3 * document.body.clientWidth) / editor.grid.length);
+    editor.init();
+    editor.render();
+
+    simapp.resize(0.3 * document.body.clientWidth, 0.3 * document.body.clientWidth);
+    sim.scale = Math.floor((0.3 * document.body.clientWidth) / editor.grid.length);
+    sim.app.render(sim.stage)
+    if (sim.store != null) 
+        sim.renderStore();
+    if (sim.customers != null)
+        sim.renderCustomers();
 })
 
 let customer = 0;

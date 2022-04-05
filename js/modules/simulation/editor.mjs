@@ -43,7 +43,6 @@ class Editor {
     }
 
     setStoresize(x, y) {
-        console.log(x)
         this.grid = new Array(x);
         for (let i = 0; i < this.grid.length; i++) {
             this.grid[i] = new Array(y).fill(0);
@@ -55,6 +54,7 @@ class Editor {
     }
 
     init() {
+        this.background.clear();
         let colorChange;
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {

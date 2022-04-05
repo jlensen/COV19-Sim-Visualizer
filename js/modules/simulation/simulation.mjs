@@ -42,6 +42,8 @@ class Simulation {
         //this.initState();
     }
 
+    // initializes the state. Can be used to reinitialize after constructor parameters
+    // changed
     initState() {
         // SIM STATE
         this.s_graphics.clear();
@@ -83,6 +85,7 @@ class Simulation {
         this.customers = [];
     }
 
+    // Generates a new customer
     newCustomer() {
         this.nCustomers -= 1;
 
@@ -95,7 +98,9 @@ class Simulation {
         return this.customers.length;
     }
 
+    // Renders the store itself, should only be done once
     renderStore() {
+        this.s_graphics.clear();
         for (let i = 0; i < this.store.blocked.length; i++) {
             for (let j = 0; j < this.store.blocked[i].length; j++) {
                 if (this.store.blocked[i][j] == 1) {
@@ -116,6 +121,7 @@ class Simulation {
         this.app.render(this.stage);
     }
 
+    // Generate a store based on the algorithm from the paper
     genStore() {
         this.store = new Store(1.0, this.randomGen);
         this.store.genMap(this.Lx, this.Ly);
@@ -124,6 +130,7 @@ class Simulation {
         this.store.initializeDoors();
     }
 
+    // loads a store from the editor
     loadStore(mapObject) {
         this.store = new Store(1.0, this.randomGen);
         this.store.loadMap(mapObject);
@@ -149,6 +156,7 @@ class Simulation {
         this.app.render(this.stage);
     }
 
+    // start the sim, so 
     startSim() {
         this.newCustomer();
         this.stepStr = "";
@@ -171,7 +179,6 @@ class Simulation {
         
         // vis code
         this.vis.moveData();
-        console.log(this.store.graph)
     }
 
     stopSim() {
