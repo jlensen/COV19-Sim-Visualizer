@@ -115,6 +115,16 @@ class Editor {
                 this.grid[x][y] = this.selected;
                 if (this.entrance != null && this.entrance[0] == x && this.entrance[1] == y) {
                     this.entrance = null;
+                    this.render();
+                    return;
+                }
+                // maybe slow for big stores
+                for (let i = 0; i < this.exits.length; i++) {
+                    if (this.exits[i][0] == x && this.exits[i][1] == y) {
+                        this.exits.splice(i, 1);
+                        this.render();
+                        return;
+                    }
                 }
             } else if (this.selected <= 1) {
                 this.grid[x][y] = this.selected;
@@ -139,6 +149,15 @@ class Editor {
                     this.grid[x][y] = this.selected;
                     if (this.entrance != null && this.entrance[0] == x && this.entrance[1] == y) {
                         this.entrance = null;
+                        this.render();
+                        return;
+                    }
+                    for (let i = 0; i < this.exits.length; i++) {
+                        if (this.exits[i][0] == x && this.exits[i][1] == y) {
+                            this.exits.splice(i, 1);
+                            this.render();
+                            return;
+                        }
                     }
                 } else if (this.selected == 1) {
                     this.grid[x][y] = this.selected;
