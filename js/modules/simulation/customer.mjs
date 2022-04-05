@@ -150,6 +150,11 @@ class SmartCustomer extends Customer {
                     this.exposureTimeThres += 1;
             }
         }
+        var threshold = 1;
+        // Code for exposure infection graphs
+        if (this.exposure >= threshold) {
+            store.addInfectionCount(this);
+        }
 
         if (this.infected == 1) 
             this.spreadViralPlumes(store);
