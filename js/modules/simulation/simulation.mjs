@@ -6,7 +6,7 @@ import { UPDATE_PRIORITY ,Ticker, Container, Graphics } from '../pixi/pixi.mjs';
 class Simulation {
 
     constructor(seed, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
-        nPlumes = 20, maxSteps = 1000, useDiffusion = true, dx = 1.0, genStore = false, app, scale, vis, hmp) {
+        nPlumes = 20, maxSteps = 1000, useDiffusion = true, dx = 1.0, genStore = false, app, scale, vis, visB, hmp) {
 
         // Apparently javascript random does not accept a seed
         // So for this we need to find something or implement it ourselves
@@ -24,6 +24,7 @@ class Simulation {
 
         // VISUALISATIONS
         this.vis = vis;
+        this.visB = visB;
         this.hmp = hmp;
 
         // PARAMETERS
@@ -171,6 +172,7 @@ class Simulation {
         
         // vis code
         this.vis.moveData();
+        this.visB.moveData();
         console.log(this.store.graph)
     }
 
@@ -249,10 +251,9 @@ class Simulation {
         }
 
         // visualisation updates
-        if (this.currentStep % 10 === 0)
-            this.vis.frameUpdate(this.infectedCount, this.currentStep);
-        // heatmap updates
         if (this.currentStep % 10 === 0) {
+            this.vis.frameUpdate(this.infectedCount, this.currentStep);
+            this.visB.frameUpdate(this.customers, this.currentStep);
             this.hmp.frameUpdate(this.store.plumes, this.currentStep);
         }
 

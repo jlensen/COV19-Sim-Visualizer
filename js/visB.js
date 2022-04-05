@@ -1,4 +1,4 @@
-class Visualisations {
+class VisB {
     constructor(ctx, ctx2) { //gets two canvas contexts and the simulation that is running
 
         this.linedata = [];//Array.from({length: 40}, () => Math.floor(Math.random() * 20)); //.sort();
@@ -16,10 +16,10 @@ class Visualisations {
                     label: 'Number of infected people in the store',
                     data: this.linedata,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(180, 23, 255, 0.2)',
                     ],
                     borderColor: [
-                        'rgba(255, 99, 132, 1)',
+                        'rgba(180, 23, 255, 1)',
                     ],
                     borderWidth: 1
                 }]
@@ -51,10 +51,10 @@ class Visualisations {
                     label: 'Number of  infected people in the store',
                     data: this.linedata2,
                     backgroundColor: [
-                        'rgba(99, 255, 132, 0.2)',
+                        'rgba(255, 235, 50, 0.3)',
                     ],
                     borderColor: [
-                        'rgba(99, 255, 132, 1)',
+                        'rgba(255, 235, 50, 1)',
                     ],
                     borderWidth: 1
                 }]
@@ -95,9 +95,9 @@ class Visualisations {
         this.lineChart2.update();
     }
 
-    frameUpdate(infCount, curStep) {
+    frameUpdate(customers, curStep) {
         this.lineChart1.data.datasets.forEach((dataset) => {
-            dataset.data.push(infCount);
+            //dataset.data.push(infCount);
         });
         // this.lineChart2.data.datasets.forEach((dataset) => {
         //     dataset.data.push(infCount);
@@ -120,5 +120,5 @@ class Visualisations {
         this.lineChart1.data.labels = [];
     }
 }
-export default Visualisations;
+export default VisB;
 

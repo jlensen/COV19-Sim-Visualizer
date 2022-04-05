@@ -146,22 +146,25 @@
                 </div>
             </div>
         </div>
-
-
-
-
     </div>
 
 </body>
 <footer>
 
-    <div class="chart-container" style="position: relative; float: left; height:40vh; width:45vw; margin:0vw 1vw 0vw 1.5vw">
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width:45vw; margin:0vw 1vw 3vw 1.5vw">
         <canvas id="vis" width="800" height="500"></canvas>
+        <button id="resetZoom" class="btn btn-primary" style="margin: 10px">Reset zoom</button>
+    </div>
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width: 45vw; margin:0vw 0vw 3vw 2.5vw">
+        <canvas id="vis2" width="800" height="500"></canvas>
+    </div>
+
+    <div class="chart-container" style="position: relative; float: left; height:40vh; width:45vw; margin:0vw 1vw 0vw 1.5vw">
+        <canvas id="visB1" width="800" height="500"></canvas>
         <button id="resetZoom" class="btn btn-primary" style="margin: 20px">Reset zoom</button>
     </div>
     <div class="chart-container" style="position: relative; float: left; height:40vh; width: 45vw; margin:0vw 0vw 0vw 2.5vw">
-        <canvas id="vis2" width="800" height="500"></canvas>
-        <canvas id="overlay" width="800" height="500"></canvas>
+        <canvas id="visB2" width="800" height="500"></canvas>
     </div>
         <div id="heatmapDiv" style="position: relative; float: left; height:45vw; width:45vw; margin:12vw 2vw 0vw 1.5vw">
             <script type="module" src="./js/heatmap.js"></script>
