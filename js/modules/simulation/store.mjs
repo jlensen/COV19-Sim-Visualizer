@@ -207,6 +207,7 @@ class Store {
                     }
                     console.log("shelveserror", i)
                     this.blocked[i][j] = 1;
+                    this.diffusionCoeff[i][j] = 0;
                 }
             }
             //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).forEach((_, i) => {
@@ -231,6 +232,7 @@ class Store {
                     for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
                         for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
                             this.blocked[i][j] = 1;
+                            this.diffusionCoeff[i][j] = 0;
                         }
                     }
                     placed += 1;

@@ -20,6 +20,10 @@ class Heatmaps {
     for (let i = 0; i < this.totPlumes.length; i++) {
         this.totPlumes[i] = new Array(this.Ly).fill(0);
     }
+    this.update = new Array(this.Lx);
+    for (let i = 0; i < this.update.length; i++) {
+        this.update[i] = new Array(this.Ly).fill(0);
+    }
     //console.log(this.totPlumes);
 
     var xValues = ['A', 'B', 'C', 'D', 'E'];
@@ -45,19 +49,20 @@ class Heatmaps {
       annotations: [],
       xaxis: {
         ticks: '',
-        side: 'top'
+        side: 'top',
       },
       yaxis: {
         ticks: '',
         ticksuffix: ' ',
         width: 700,
         height: 700,
-        autosize: false
-      }
+        autosize: false,
+        autorange: 'reversed',
+      },
     };
 
-    for ( var i = 0; i < yValues.length; i++ ) {
-      for ( var j = 0; j < xValues.length; j++ ) {
+    for ( var i = 0; i < xValues.length; i++ ) {
+      for ( var j = 0; j < yValues.length; j++ ) {
         var currentValue = zValues[i][j];
         if (currentValue != 0.0) {
           var textColor = 'white';
@@ -67,8 +72,8 @@ class Heatmaps {
         var result = {
           xref: 'x1',
           yref: 'y1',
-          x: xValues[j],
-          y: yValues[i],
+          x: xValues[i],
+          y: yValues[j],
           text: zValues[i][j],
           font: {
             family: 'Arial',
@@ -87,14 +92,19 @@ class Heatmaps {
     Plotly.newPlot('heatmapDiv', data, layout);
     Plotly.newPlot('heatmapDiv2', data, layout);
   }
+
   frameUpdate(plumes, curStep) {
+
     for (let i = 0; i < plumes.length; i++) {
       for (let j = 0; j < plumes[i].length; j++) {
-        this.totPlumes[i][j] += plumes[i][j]/curStep;
+        this.totPlumes[i][j] += plumes[i][j];
+        this.update[i][j] = this.totPlumes[i][j]/curStep;
       }
     }
-    var update = this.totPlumes;
-    Plotly.restyle('heatmapDiv', 'z' , [update]);
+
+    let output = this.update[0].map((_, colIndex) => this.update.map(row => row[colIndex]));
+
+    Plotly.restyle('heatmapDiv', 'z' , [output]);
     //Plotly.relayout('heatmapDiv', test);
     //console.log(update.z);
   }
