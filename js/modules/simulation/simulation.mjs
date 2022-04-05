@@ -39,6 +39,7 @@ class Simulation {
         this.dx = dx;
         this.nShelves = nShelves;
 
+        this.selectedStore = null;
         //this.initState();
     }
 
@@ -46,11 +47,12 @@ class Simulation {
     // changed
     initState() {
         // SIM STATE
-        this.s_graphics.clear();
         this.customerNow = 0;     
         this.currentStep = 0;
         this.infectedCount = 0;
         this.customers = [];
+
+        this.paused = false;
 
         if (this.nCustomers == 1) {
 			this.probInfCustomer = -1;
@@ -123,6 +125,7 @@ class Simulation {
 
     // Generate a store based on the algorithm from the paper
     genStore() {
+        this.c_graphics.clear()
         this.store = new Store(1.0, this.randomGen);
         this.store.genMap(this.Lx, this.Ly);
         this.store.initializeShelvesRegular(this.nShelves);
@@ -132,6 +135,7 @@ class Simulation {
 
     // loads a store from the editor
     loadStore(mapObject) {
+        this.c_graphics.clear()
         this.store = new Store(1.0, this.randomGen);
         this.store.loadMap(mapObject);
         this.store.createStaticGraph();
@@ -187,6 +191,16 @@ class Simulation {
             this.ticker.destroy();
         }
         this.ticker = new Ticker();
+    }
+
+    pauseSim() {
+        if (this.paused) {
+            this.paused = false;
+            this.ticker.start();
+        } else {
+            this.paused = true;
+            this.ticker.stop();
+        }
     }
 
     hasEnded() {

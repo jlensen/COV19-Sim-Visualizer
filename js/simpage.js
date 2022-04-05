@@ -15,8 +15,9 @@ let editorapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, heig
 let editor = new Editor(editorapp, 35);
 editor.setStoresize(20, 20);
 editordiv.appendChild(editorapp.view)
-//document.getElementById("editor").appendChild(editorapp.view);
 
+// disable sim button before a map is loaded
+document.getElementById("loadbtn").setAttribute("disabled", "");
 // Editor functionality
 editorapp.view.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -53,12 +54,12 @@ document.getElementById("storesize").addEventListener("change", () => {
 })
 
 // Sim UI functionality
-document.getElementById("loadbtn").addEventListener("click", startsim.bind(sim))
-document.getElementById("stopbtn").addEventListener("click", sim.stopSim.bind(sim))
+document.getElementById("stopbtn").addEventListener("click", sim.pauseSim.bind(sim))
 document.getElementById("genbtn").addEventListener("click", () => {
     sim.genStore();
     sim.initState();
     sim.renderStore();
+    document.getElementById("loadbtn").removeAttribute("disabled");
 })
 
 
@@ -66,6 +67,7 @@ document.getElementById("usemapbtn").addEventListener("click", () => {
     sim.loadStore(editor.getMapObject());
     sim.initState();
     sim.renderStore();
+    document.getElementById("loadbtn").removeAttribute("disabled");
 })
 
 // resize canvas for sim and editor when page resizes
@@ -86,9 +88,14 @@ window.addEventListener("resize", () => {
 
 let customer = 0;
 
-function startsim() {
+let startsim = () => {
+    console.log("start")
     //stop current sim first
-    this.stopSim();
+    document.getElementById("loadbtn").setAttribute("disabled", "");
+    sim.stopSim();
+    sim.renderStore();
+    sim.initState();
+    //sim.renderStore();
 
     let n_cust = document.getElementById("n_cust").value;
     let cust_rate = document.getElementById("cust_rate").value;
@@ -96,12 +103,14 @@ function startsim() {
     let n_shelves = document.getElementById("n_shelves").value;
     let n_steps = document.getElementById("n_steps").value;
 
-    this.nCustomers = n_cust;
-    this.probNewCustomer = cust_rate;
-    this.probInfCustomer = inf_rate;
-    this.nShelves = n_shelves;
-    this.maxSteps = n_steps;
-    this.startSim();
+    sim.nCustomers = n_cust;
+    sim.probNewCustomer = cust_rate;
+    sim.probInfCustomer = inf_rate;
+    sim.nShelves = n_shelves;
+    sim.maxSteps = n_steps;
+    sim.startSim();
     //this.hasEnded = false;
     //this.runSimulation();
 }
+
+document.getElementById("loadbtn").addEventListener("click", startsim)
