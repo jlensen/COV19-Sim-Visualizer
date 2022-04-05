@@ -172,6 +172,8 @@ class Simulation {
         // vis code
         this.vis.moveData();
         console.log(this.store.graph)
+
+        this.hmp.moveData();
     }
 
     stopSim() {

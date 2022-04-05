@@ -24,6 +24,10 @@ class Heatmaps {
     for (let i = 0; i < this.update.length; i++) {
         this.update[i] = new Array(this.Ly).fill(0);
     }
+    this.output = new Array(this.Lx);
+    for (let i = 0; i < this.output.length; i++) {
+        this.output[i] = new Array(this.Ly).fill(0);
+    }
     //console.log(this.totPlumes);
 
     var xValues = ['A', 'B', 'C', 'D', 'E'];
@@ -102,11 +106,21 @@ class Heatmaps {
       }
     }
 
-    let output = this.update[0].map((_, colIndex) => this.update.map(row => row[colIndex]));
+    this.output = this.update[0].map((_, colIndex) => this.update.map(row => row[colIndex]));
 
-    Plotly.restyle('heatmapDiv', 'z' , [output]);
+    Plotly.restyle('heatmapDiv', 'z' , [this.output]);
     //Plotly.relayout('heatmapDiv', test);
     //console.log(update.z);
+  }
+
+  moveData() {
+    Plotly.restyle('heatmapDiv2', 'z', [this.output])
+
+    for (let i = 0; i < this.totPlumes.length; i++) {
+      for (let j = 0; j < this.totPlumes[i].length; j++) {
+        this.totPlumes[i][j] = 0;
+      }
+    }
   }
 }
 
