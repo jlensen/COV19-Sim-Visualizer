@@ -4,6 +4,7 @@ import * as PIXI from './modules/pixi/pixi.mjs';
 import Visualisations from './visualisations.js';
 import VisB from './visB.js';
 import Heatmaps from './heatmap.js';
+import { params } from './modules/simulation/util.mjs';
 
 // INIT SIMULATION
 let simapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
@@ -145,12 +146,18 @@ let startsim = () => {
     let inf_rate = document.getElementById("inf_rate").value;
     let n_shelves = document.getElementById("n_shelves").value;
     let n_steps = document.getElementById("n_steps").value;
+    let masks = document.getElementById("mask").checked;
 
     sim.nCustomers = n_cust;
     sim.probNewCustomer = cust_rate;
     sim.probInfCustomer = inf_rate;
     sim.nShelves = n_shelves;
     sim.maxSteps = n_steps;
+    if (masks) {
+        params.PLUMECONCINC = 5.0;
+    } else {
+        params.PLUMECONCINC = 40000.0;
+    }
     if (test_bool) {
         document.getElementById("n_cust_error").innerText = null;
         document.getElementById("cust_rate_error").innerText = null;
