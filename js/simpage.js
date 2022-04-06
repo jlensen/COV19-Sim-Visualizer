@@ -83,6 +83,7 @@ document.getElementById("stopbtn").addEventListener("click", () => {
 document.getElementById("genbtn").addEventListener("click", () => {
     sim.genStore();
     sim.initState();
+    sim.scale = Math.floor((0.3 * document.body.clientWidth) / sim.store.grid.Lx);
     sim.renderStore();
     document.getElementById("loadbtn").removeAttribute("disabled");
 })
@@ -91,6 +92,7 @@ document.getElementById("genbtn").addEventListener("click", () => {
 document.getElementById("usemapbtn").addEventListener("click", () => {
     sim.loadStore(editor.getMapObject());
     sim.initState();
+    sim.scale = Math.floor((0.3 * document.body.clientWidth) / sim.store.Lx);
     sim.renderStore();
     document.getElementById("loadbtn").removeAttribute("disabled");
 })
@@ -100,10 +102,11 @@ window.addEventListener("resize", () => {
     editorapp.resize(0.3 * document.body.clientWidth, 0.3 * document.body.clientWidth);
     editor.scale = Math.floor((0.3 * document.body.clientWidth) / editor.grid.length);
     editor.init();
+    editor.resetHitareas();
     editor.render();
 
     simapp.resize(0.3 * document.body.clientWidth, 0.3 * document.body.clientWidth);
-    sim.scale = Math.floor((0.3 * document.body.clientWidth) / editor.grid.length);
+    sim.scale = Math.floor((0.3 * document.body.clientWidth) / sim.store.Lx);
     sim.app.render(sim.stage)
     if (sim.store != null) 
         sim.renderStore();

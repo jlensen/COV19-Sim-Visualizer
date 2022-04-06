@@ -22,7 +22,7 @@ class Editor {
         this.objects.on("pointerdown", this.handleDrawClick.bind(this));
         this.objects.on("pointermove", this.handleDrawDrag.bind(this));
         this.objects.on("pointerup", this.handleDrawRelease.bind(this));
-        this.objects.hitArea = new Rectangle(0, 0, this.app.width, this.app.height);
+        //this.objects.hitArea = new Rectangle(0, 0, this.grid.length * this.scale, this.grid.length * this.scale);
 
         // Holds background pattern
         this.background = new Graphics();
@@ -52,6 +52,12 @@ class Editor {
         this.objects.clear();
         this.background.clear();
         this.init();
+        this.resetHitareas();
+    }
+
+    resetHitareas() {
+        this.stage.hitArea = new Rectangle(0, 0, this.app.width, this.app.height);
+        this.objects.hitArea = new Rectangle(0, 0, this.grid.length * this.scale, this.grid.length * this.scale);
     }
 
     // Construct an alternating grid of light and dark grey squares as background
