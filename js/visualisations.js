@@ -29,7 +29,7 @@ class Visualisations {
                 },
                 {
                     fill: true,
-                    label: 'Number of new infections',
+                    label: 'Number of potential new infections',
                     data: this.linedata3,
                     backgroundColor: [
                         'rgba(25, 128, 255, 0.2)',
@@ -67,7 +67,7 @@ class Visualisations {
                 labels: this.lineLabels,
                 datasets: [{
                     fill: true,
-                    label: 'Number of  infected people in the store',
+                    label: 'Number of infected people in the store',
                     data: this.linedata2,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -79,7 +79,7 @@ class Visualisations {
                 },
                 {
                     fill: true,
-                    label: 'Number of new infections',
+                    label: 'Number of potential new infections',
                     data: this.linedata4,
                     backgroundColor: [
                         'rgba(25, 128, 255, 0.2)',
