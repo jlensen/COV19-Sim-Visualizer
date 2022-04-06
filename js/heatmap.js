@@ -119,14 +119,7 @@ class Heatmaps {
   }
 
   moveData() {
-    /** for (let i = 0; i < this.cumTotPlumes.length; i++) {
-      for (let j = 0; j < this.cumTotPlumes[i].length; j++) {
-        this.cumTotPlumes[i][j] += this.output[i][j];
-      }
-    } **/
-
     Plotly.restyle('heatmapDiv2', 'z', [this.output]);
-
     this.clearData();
   }
 

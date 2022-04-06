@@ -148,6 +148,8 @@ let startsim = () => {
     let n_shelves = document.getElementById("n_shelves").value;
     let n_steps = document.getElementById("n_steps").value;
     let masks = document.getElementById("mask").checked;
+    let cont_const = document.getElementById("cont_const").value;
+    let cont_inc = document.getElementById("cont_inc").value;
 
     sim.nCustomers = n_cust;
     sim.probNewCustomer = cust_rate;
@@ -155,8 +157,10 @@ let startsim = () => {
     sim.nShelves = n_shelves;
     sim.maxSteps = n_steps;
     if (masks) {
-        params.PLUMECONCINC = 5.0;
+        params.PLUMECONCCONT = parseFloat(cont_const);
+        params.PLUMECONCINC = parseFloat(cont_inc);
     } else {
+        params.PLUMECONCCONT = 5.0;
         params.PLUMECONCINC = 40000.0;
     }
     if (test_bool) {

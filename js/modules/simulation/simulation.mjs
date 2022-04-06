@@ -187,7 +187,6 @@ class Simulation {
         this.ticker.add(tickUpdate.bind(this), UPDATE_PRIORITY.HIGH);
         this.ticker.start();
 
-        // vis code
         let save = document.getElementById("save_fig").checked;
         if (save) {
             this.vis.moveData();
