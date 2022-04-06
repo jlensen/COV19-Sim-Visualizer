@@ -188,8 +188,14 @@ class Simulation {
         this.ticker.start();
 
         // vis code
-        this.vis.moveData();
-        this.hmp.moveData();
+        let save = document.getElementById("save_fig").checked;
+        if (save) {
+            this.vis.moveData();
+            this.hmp.moveData();
+        } else {
+            this.vis.clearData();
+            this.hmp.clearData();
+        }
     }
 
     stopSim() {

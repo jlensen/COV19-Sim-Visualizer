@@ -148,10 +148,15 @@ class Visualisations {
         this.lineChart2.data.labels = this.lineChart1.data.labels;
         this.lineChart2.update();
 
+        this.clearData();
+    }
+
+    clearData() {
         this.lineChart1.data.datasets[0].data = [];
         this.lineChart1.data.datasets[1].data = [];
         this.lineChart1.data.labels = [];
     }
+
     setYscale() {
         var maxLineItem = Math.max(this.lineChart1.options.scales.y.max, 
             this.lineChart2.options.scales.y.max);

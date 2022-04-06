@@ -125,8 +125,12 @@ class Heatmaps {
       }
     } **/
 
-    Plotly.restyle('heatmapDiv2', 'z', [this.output])
+    Plotly.restyle('heatmapDiv2', 'z', [this.output]);
 
+    this.clearData();
+  }
+
+  clearData() {
     for (let i = 0; i < this.totPlumes.length; i++) {
       for (let j = 0; j < this.totPlumes[i].length; j++) {
         this.totPlumes[i][j] = 0;
