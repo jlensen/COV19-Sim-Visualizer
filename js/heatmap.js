@@ -15,8 +15,6 @@ class Heatmaps {
     var z7 = new Array(9).fill().map(() => Math.random());
     var z8 = new Array(9).fill().map(() => Math.random());
     //console.log(z0);
-    this.tempStep = 0;
-    this.lastStep = 0;
     this.totPlumes = new Array(this.Lx);
     for (let i = 0; i < this.totPlumes.length; i++) {
         this.totPlumes[i] = new Array(this.Ly).fill(0);
@@ -107,7 +105,7 @@ class Heatmaps {
     for (let i = 0; i < plumes.length; i++) {
       for (let j = 0; j < plumes[i].length; j++) {
         this.totPlumes[i][j] += plumes[i][j];
-        this.update[i][j] = this.totPlumes[i][j]/(curStep - this.tempStep);
+        this.update[i][j] = this.totPlumes[i][j]/curStep;
       }
     }
 
@@ -126,7 +124,6 @@ class Heatmaps {
         this.cumTotPlumes[i][j] += this.output[i][j];
       }
     } **/
-    this.tempStep = this.lastStep;
 
     Plotly.restyle('heatmapDiv2', 'z', [this.output])
 
