@@ -1,14 +1,12 @@
-import {params} from './util.mjs'
+import { params } from './util.mjs'
 import SmartCustomer from './customer.mjs';
 import { Store } from './store.mjs';
-import { UPDATE_PRIORITY ,Ticker, Container, Graphics } from '../pixi/pixi.mjs';
+import { UPDATE_PRIORITY, Ticker, Container, Graphics } from '../pixi/pixi.mjs';
 
 class Simulation {
 
     constructor(seed = 1, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
         nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, app, scale, vis) {
-        // Apparently javascript random does not accept a seed
-        // So for this we need to find something or implement it ourselves
 
         // GRAPHICS
         this.app = app;
@@ -39,15 +37,16 @@ class Simulation {
         this.dx = dx;
         this.nShelves = nShelves;
 
+        // original map before customers so we can re-render store
+        // without customers becoming shelves
         this.selectedStore = null;
-        //this.initState();
     }
 
     // initializes the state. Can be used to reinitialize after constructor parameters
     // changed
     initState() {
         // SIM STATE
-        this.customerNow = 0;     
+        this.customerNow = 0;
         this.currentStep = 0;
         this.infectedCount = 0;
         this.customers = [];
@@ -55,14 +54,14 @@ class Simulation {
         this.paused = false;
 
         if (this.nCustomers == 1) {
-			this.probInfCustomer = -1;
-			this.updatePlumes = false;
+            this.probInfCustomer = -1;
+            this.updatePlumes = false;
 
             // TODO: Look at what this is and if we need it?
-			this.store.initStaticPlumeField(this.nPlumes);
+            this.store.initStaticPlumeField(this.nPlumes);
         }
-		else {
-			this.updatePlumes=true;
+        else {
+            this.updatePlumes = true;
         }
 
         if (this.useDiffusion) {
@@ -72,15 +71,15 @@ class Simulation {
         }
 
         this.exposureHist = new Array(this.nCustomers).fill(0);
-		this.exposureHistTime = new Array(this.nCustomers).fill(0);
-		this.exposureHistTimeThres = new Array(this.nCustomers).fill(0);
-		this.itemsBought = new Array(this.nCustomers).fill(0);
-		this.timeSpent = new Array(this.nCustomers).fill(0);
-		this.customerInfected = new Array(this.nCustomers).fill(0);
-		this.customersNowInStore = new Array(this.maxSteps).fill(0);
-		this.emittingCustomersNowInStore = new Array(this.maxSteps).fill(0);
-		this.customersNowInQueue = new Array(this.maxSteps).fill(0);
-		this.exposureDuringTimeStep = new Array(this.maxSteps).fill(0);
+        this.exposureHistTime = new Array(this.nCustomers).fill(0);
+        this.exposureHistTimeThres = new Array(this.nCustomers).fill(0);
+        this.itemsBought = new Array(this.nCustomers).fill(0);
+        this.timeSpent = new Array(this.nCustomers).fill(0);
+        this.customerInfected = new Array(this.nCustomers).fill(0);
+        this.customersNowInStore = new Array(this.maxSteps).fill(0);
+        this.emittingCustomersNowInStore = new Array(this.maxSteps).fill(0);
+        this.customersNowInQueue = new Array(this.maxSteps).fill(0);
+        this.exposureDuringTimeStep = new Array(this.maxSteps).fill(0);
 
         this.infectedCount = 0;
 
@@ -105,13 +104,14 @@ class Simulation {
         this.s_graphics.clear();
         for (let i = 0; i < this.store.blocked.length; i++) {
             for (let j = 0; j < this.store.blocked[i].length; j++) {
-                if (this.store.blocked[i][j] == 1) {
-                this.s_graphics.beginFill(0x1c1f1d);
-                this.s_graphics.drawRect(this.scale * i, this.scale * j, this.scale, this.scale);
-                this.s_graphics.endFill();
+                if (this.store.blockedShelves[i][j] == 1) {
+                    this.s_graphics.beginFill(0x1c1f1d);
+                    this.s_graphics.drawRect(this.scale * i, this.scale * j, this.scale, this.scale);
+                    this.s_graphics.endFill();
+                }
             }
         }
-        }
+        // render 
         for (let i = 0; i < this.store.exit.length; i++) {
             this.s_graphics.beginFill(0x9a53fc);
             this.s_graphics.drawRect(this.scale * this.store.exit[i][0], this.scale * this.store.exit[i][1], this.scale, this.scale);
@@ -127,8 +127,9 @@ class Simulation {
     genStore() {
         this.c_graphics.clear()
         this.store = new Store(1.0, this.randomGen);
-        this.store.genMap(this.Lx, this.Ly);
-        this.store.initializeShelvesRegular(this.nShelves);
+        this.store.genMap(this.Lx, this.Ly, this.nShelves);
+        //this.store.initializeShelvesRegular(this.nShelves);
+        this.scale = this.app.width / this.Lx;
         this.store.createStaticGraph();
         this.store.initializeDoors();
     }
@@ -160,7 +161,8 @@ class Simulation {
         this.app.render(this.stage);
     }
 
-    // start the sim, so 
+    // start the sim, mostly initializing final variables needed before execution
+    // and start ticker for render loop
     startSim() {
         this.newCustomer();
         this.stepStr = "";
@@ -180,7 +182,7 @@ class Simulation {
 
         this.ticker.add(tickUpdate.bind(this), UPDATE_PRIORITY.HIGH);
         this.ticker.start();
-        
+
         // vis code
         this.vis.moveData();
     }
@@ -207,6 +209,9 @@ class Simulation {
         return this.currentStep == this.maxSteps;
     }
 
+    // Takes one step in the simulation
+    // using this in the render loop allows us to update the sim according to screen
+    // refresh rate
     simStep() {
         this.customersNowInStore[this.currentStep] = this.customers.length;
         this.customersNowInQueue[this.currentStep] = this.customersHeadExit;
@@ -281,9 +286,9 @@ class Simulation {
     getStats() {
         return {
             infections: this.infectedCount,
-            step : this.currentStep,
-            custCount : this.customers.length,
-            totExposure : this.exposureDuringTimeStep[this.currentStep]
+            step: this.currentStep,
+            custCount: this.customers.length,
+            totExposure: this.exposureDuringTimeStep[this.currentStep]
         }
     }
 }

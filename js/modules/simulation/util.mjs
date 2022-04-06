@@ -31,10 +31,13 @@ let params = {
 }
 
 export {params};
+
+// Return a number between low (including) and high (excluding)
 export function randRange(low, high, randomGen) {
     return Math.floor(randomGen() * (high - low) + low);
 };
 
+// Check whether a coordinate is in a 2D array of coordinates
 export function checkCoordIn2DArray(x, y, array) {
     for (let i = 0; i < array.length; i++) {
         if (array[i][0] == x && array[i][1] == y) {
@@ -44,6 +47,7 @@ export function checkCoordIn2DArray(x, y, array) {
     return false;
 };
 
+// Randomly permute an array
 export function permuteArray(array, randomGen) {
     let copy = [...array]
     let result = []

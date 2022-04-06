@@ -8,6 +8,7 @@ class Store {
         this.randomGen = randomGen;
     }
 
+    // Sets state such that a mapObject from editor can be used as map
     loadMap(mapObject) {
         this.Lx = mapObject.grid.length;
         this.Ly = mapObject.grid.length;
@@ -22,7 +23,8 @@ class Store {
         this.initState();
     }
 
-    genMap(Lx, Ly) {
+    // Generates a random map according to algorithm in original sim
+    genMap(Lx, Ly, nShelves) {
         this.Lx = Lx;
         this.Ly = Ly;
         //this.blocked = null
@@ -38,6 +40,7 @@ class Store {
         this.exitActive = new Array(params.NEXITS).fill(0);
         this.graph;
         this.initState();
+        this.initializeShelvesRegular(nShelves);
     }
 
     initState() {
@@ -68,11 +71,10 @@ class Store {
         this.storeWideExposure = 0;
     }
 
-    // TODO check this, exposure seems to be high
+    // Make exposure plumes spread and fade out over time
     updateDiffusion() {
         this.plumesNew = this.plumes.map((a) => a.slice())
 
-        // TODO lots of loops, maybe we can combine some of them?
         for (let i = 1; i < this.plumesNew.length; i++) {
             for (let j = 0; j < this.plumesNew[i].length; j++) {
                 this.plumesNew[i][j] = this.plumesNew[i][j] + (this.diffusionCoeff[i][j] * this.diffusionCoeff[i-1][j] * this.dt * (this.plumes[i-1][j] - this.plumes[i][j])/Math.pow(this.dx, 2) / params.DIFFCOEFF);
@@ -120,6 +122,7 @@ class Store {
         return [plumePosx, plumePosy];
     }
 
+    // Only used when 1 customer
     initStaticPlumeField(nPlumes) {
         for (let i = 0; i < nPlumes; i++) {
             this.addPlume(1);
@@ -136,8 +139,6 @@ class Store {
 
     getExit() {
         let exitInd = this.exitActive.indexOf(Math.min(...this.exitActive));
-        console.log(this.exitActive)
-        console.log("exit is: " + exitInd);
         this.exitActive[exitInd] += 1;
         let exit = this.exit[exitInd];
         return [parseInt(exit[0]), parseInt(exit[1])];
@@ -188,32 +189,24 @@ class Store {
             let shelfPosx = randRange(1, this.Lx - shelfSize[0] - 1, this.randomGen);
             let shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1, this.randomGen);
 
-            //while ((this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0)) {
+        
             while (this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0) > 0) {
                 shelfPosx = randRange(1, this.Lx + shelfSize[0] - 1, this.randomGen);
                 shelfPosy = randRange(1, this.Ly - shelfSize[1] - 1, this.randomGen);
                 tries += 1;
                 if (tries > 1e4) {
-                    //this.blockedShelves = [...this.blocked];
                     this.blockedShelves = this.blocked.map((a) => a.slice());
                     return placed;
                 }
             }
-            //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]).fill(1);
             for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
                 for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
-                    // TODO, check this later, why is it sometimes smaller than 0
-                    console.log(i, j)
                     if (i < 0 || j < 0) {
                         continue;
                     }
-                    console.log("shelveserror", i)
                     this.blocked[i][j] = 1;
                 }
             }
-            //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).forEach((_, i) => {
-            //    this[i] = 1;
-            //});
             placed += 1;
 
             // TODO don't know if this is the right way to choose
@@ -229,7 +222,6 @@ class Store {
                     break;
                 }
                 if (!(this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).map(i => i.slice(shelfPosy, shelfPosy + shelfSize[1])).reduce((sum, e) => sum + e, 0) > 0)) {
-                    //this.blocked.slice(shelfPosx, shelfPosx + shelfSize[0]).slice(shelfPosy, shelfPosy + shelfSize[1]).fill(1);
                     for (let i = shelfPosx; i < shelfPosx + shelfSize[0]; i++) {
                         for (let j = shelfPosy; j < shelfPosy + shelfSize[1]; j++) {
                             this.blocked[i][j] = 1;
@@ -263,15 +255,12 @@ class Store {
             this.exit.push(this.getCoordFromIndex(exitInd));
             i += params.CASHIERD;
         }
-        console.log(this.exit)
-        // TODO do we just pop off the last element here? they slice until last element
-        //this.exit.pop();
     }
 }
 
-// Just a simple graph implementation for now
-// let's make it undirected for now, so we can only create square stores for now
-// TODO Sometimes errors in pathfinding, although the problem may be in the simulation itself
+// Simple graph implementation
+// Edges are stored in a 2D array where
+// Edges[i] holds all nodes to which i is connected
 class Graph {
     constructor(n) {
         this.edges = new Array(n);
@@ -285,7 +274,7 @@ class Graph {
             return;
         }
         this.edges[source].push(target);
-        // adding reverse gives problems, but if we always search from low to high it shouldn't give problems
+        // reverse edge added as well
         this.edges[target].push(source);
     }
 
@@ -293,8 +282,8 @@ class Graph {
         return this.edges[a].includes(b);
     }
 
+    // Simple shortest path implementation based on BFS
     shortestPath(source, target) {
-        //console.log("called with: " + source + " " + target);
         if (source == target) {
             return [];
         }
@@ -320,6 +309,7 @@ class Graph {
                 }
             }
         }
+        // reconstruct path starting from target and finding predecessors
         let path = []
         path.push(target);
         let start = pred[target];
@@ -330,8 +320,7 @@ class Graph {
                 break;
             }
         }
-        //console.log("done");
-        //console.log(path);
+        // reverser to get path fro msource to target
         return path.reverse();
     }
 }

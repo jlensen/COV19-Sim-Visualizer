@@ -3,18 +3,21 @@ import Editor from './modules/simulation/editor.mjs';
 import * as PIXI from './modules/pixi/pixi.mjs'
 import Visualisations from './visualisations.js'
 
-
+// INIT SIMULATION
 let simapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
 simapp.render(new PIXI.Container);
 var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'), sim);
 var sim = new Simulation(0, 20, 20, 10, 50, 0.1, 0.1, 20, 1000, true, 1.0, simapp, 15, vis);
 document.getElementById("sim").appendChild(simapp.view);
 
+// INIT EDITOR
 let editordiv = document.getElementById("editor")
 let editorapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
 let editor = new Editor(editorapp, 35);
 editor.setStoresize(20, 20);
 editordiv.appendChild(editorapp.view)
+
+// GENERAL UI
 
 // disable sim button before a map is loaded
 document.getElementById("loadbtn").setAttribute("disabled", "");
@@ -53,8 +56,15 @@ document.getElementById("storesize").addEventListener("change", () => {
     editor.setStoresize(size, size);
 })
 
-// Sim UI functionality
-document.getElementById("stopbtn").addEventListener("click", sim.pauseSim.bind(sim))
+// SIM UI FUNCTIONALITY
+document.getElementById("stopbtn").addEventListener("click", () => {
+    sim.pauseSim();
+    if (sim.paused) {
+        document.getElementById("stopbtn").innerHTML = "Resume";
+    } else {
+        document.getElementById("stopbtn").innerHTML = "Stop";
+    }
+})
 document.getElementById("genbtn").addEventListener("click", () => {
     sim.genStore();
     sim.initState();
@@ -85,8 +95,6 @@ window.addEventListener("resize", () => {
     if (sim.customers != null)
         sim.renderCustomers();
 })
-
-let customer = 0;
 
 let startsim = () => {
     console.log("start")

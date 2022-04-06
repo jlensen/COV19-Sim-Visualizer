@@ -11,13 +11,18 @@ class Customer {
         this.shoppingList = [];
         this.path = null;
         this.probSpreadPlume = probSpreadPlume;
+        // how much exposure to virus
         this.exposure = 0;
+        // how long exposed to virus
         this.exposureTime = 0;
+        // How long exposed to virus after exceeding the threshold for amount of
+        // virus particles one should be exposed to
         this.exposureTimeThres = 0;
         this.timeInStore = 0;
         this.initItemsList = null;
         this.cashierWaitingTime = null;
         this.waitingTime = 0;
+        // Whether heading for exit
         this.headingForExit = 0;
     }
 
@@ -165,15 +170,12 @@ class SmartCustomer extends Customer {
         // heading for exit
         if (this.shoppingList.length == 0) {
             if (!this.atExit(store)) {
-                console.log("not at exit", this.waitingTime)
                 this.shoppingList.push(store.getExit());
                 this.headingForExit = 1;
             } else if (this.atExit(store) && this.cashierWaitingTime > 0) {
-                console.log("now just waiting")
                 this.cashierWaitingTime -= 1;
                 return [this.x, this.y]; 
             } else {
-                console.log("yes can exit")
                 store.blocked[this.x][this.y] = 0;
                 return [-1, -1];
             }
