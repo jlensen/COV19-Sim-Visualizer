@@ -1,8 +1,9 @@
-import Simulation from './modules/simulation/simulation.mjs'
+import Simulation from './modules/simulation/simulation.mjs';
 import Editor from './modules/simulation/editor.mjs';
-import * as PIXI from './modules/pixi/pixi.mjs'
-import Visualisations from './visualisations.js'
-import Heatmaps from './heatmap.js'
+import * as PIXI from './modules/pixi/pixi.mjs';
+import Visualisations from './visualisations.js';
+import VisB from './visB.js';
+import Heatmaps from './heatmap.js';
 
 // INIT SIMULATION
 let simapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
@@ -10,8 +11,10 @@ simapp.render(new PIXI.Container);
 document.getElementById("sim").appendChild(simapp.view);
 var Lx = 20; 
 var Ly = 20;
-var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'), sim);
+var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'));
+//var visB = new VisB(document.getElementById('visB1').getContext('2d'), document.getElementById('visB2').getContext('2d'));
 var hmp = new Heatmaps(Lx, Ly);
+
 var sim = new Simulation(0, Lx, Ly, 10, 50, 0.1, 0.1, 20, 1000, true, 1.0, simapp, 15, vis, hmp);
 
 

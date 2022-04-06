@@ -197,6 +197,8 @@ class Simulation {
             this.ticker.stop();
             this.ticker.destroy();
         }
+        this.currentStep = 0;
+       // this.vis.setYscale(); // sets the y range of both graphs
         this.ticker = new Ticker();
     }
 
@@ -279,10 +281,16 @@ class Simulation {
         }
 
         // visualisation updates
-        if (this.currentStep % 10 === 0)
-            this.vis.frameUpdate(this.infectedCount, this.currentStep);
-        // heatmap updates
-        if (this.currentStep % 10 === 0) {
+        if (this.currentStep % 2 === 0 || this.currentStep == 1) {
+            var totNewInfections = 0;
+            this.customers.forEach(c => {
+                if (c.newInfection) {
+                    totNewInfections++;
+                }
+            });
+            this.vis.frameUpdate(this.infectedCount, totNewInfections, this.currentStep);
+        }
+        if (this.currentStep % 20 === 0 || this.currentStep == 1) {
             this.hmp.frameUpdate(this.store.plumes, this.currentStep);
         }
 
@@ -291,6 +299,7 @@ class Simulation {
             // end condition, do whatever we want?
             // stop sim and update vis
             this.stopSim();
+            //console.log('endcondition');
             return;
         }
     }

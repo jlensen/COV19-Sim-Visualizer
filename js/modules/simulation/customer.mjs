@@ -24,6 +24,7 @@ class Customer {
         this.waitingTime = 0;
         // Whether heading for exit
         this.headingForExit = 0;
+        this.newInfection = false;
     }
 
     // should be an array with only an x and a y.
@@ -158,6 +159,11 @@ class SmartCustomer extends Customer {
                     this.infected = 1;
             }
         }
+        var threshold = 1;
+        // Code for exposure infection graphs
+        if (this.exposure >= threshold && !this.newInfection) {
+            this.newInfection = true;
+        }
 
         if (this.infected == 1) 
             this.spreadViralPlumes(store);
@@ -171,6 +177,7 @@ class SmartCustomer extends Customer {
         // heading for exit
         if (this.shoppingList.length == 0) {
             if (!this.atExit(store)) {
+
                 this.shoppingList.push(store.getExit());
                 this.headingForExit = 1;
             } else if (this.atExit(store) && this.cashierWaitingTime > 0) {
