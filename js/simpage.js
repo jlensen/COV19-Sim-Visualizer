@@ -77,7 +77,7 @@ document.getElementById("stopbtn").addEventListener("click", () => {
     if (sim.paused) {
         document.getElementById("stopbtn").innerHTML = "Resume";
     } else {
-        document.getElementById("stopbtn").innerHTML = "Stop";
+        document.getElementById("stopbtn").innerHTML = "Pause";
     }
 })
 document.getElementById("genbtn").addEventListener("click", () => {
@@ -135,8 +135,9 @@ let startsim = () => {
         test_bool = false;
     }
     //stop current sim first
-    document.getElementById("loadbtn").setAttribute("disabled", "");
+    
     sim.stopSim();
+    document.getElementById("loadbtn").setAttribute("disabled", "");
     sim.renderStore();
     sim.initState();
     //sim.renderStore();

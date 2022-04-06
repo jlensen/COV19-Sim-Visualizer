@@ -159,9 +159,9 @@ class SmartCustomer extends Customer {
                   //  this.infected = 1;
             }
         }
-        var threshold = 1;
+        var threshold = 10000;
         // Code for exposure infection graphs
-        if (this.exposure >= threshold && !this.newInfection) {
+        if (this.exposure >= threshold && !this.newInfection && this.infected == 0) {
             this.newInfection = true;
         }
 
