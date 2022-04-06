@@ -8,6 +8,7 @@ class Editor {
         this.exits = [];
         this.scale = scale;
         this.app = app;
+        // Stage holds all objects, also handles canvas movement
         this.stage = new Container();
         this.stage.interactive = true;
         this.stage.on("pointerdown", this.handleMoveClick.bind(this));
@@ -34,6 +35,7 @@ class Editor {
         this.stage.addChild(this.editorContents);
         this.app.render(this.stage);
 
+        // Whether dragging for either drawing or moving
         this.drawDrag = false;
         this.moveDrag = false;
 
@@ -43,18 +45,18 @@ class Editor {
     }
 
     setStoresize(x, y) {
-        console.log(x)
         this.grid = new Array(x);
         for (let i = 0; i < this.grid.length; i++) {
             this.grid[i] = new Array(y).fill(0);
         }
-        console.log(this.grid.length)
         this.objects.clear();
         this.background.clear();
         this.init();
     }
 
+    // Construct an alternating grid of light and dark grey squares as background
     init() {
+        this.background.clear();
         let colorChange;
         for (let i = 0; i < this.grid.length; i++) {
             for (let j = 0; j < this.grid[i].length; j++) {
@@ -101,6 +103,7 @@ class Editor {
         this.app.render(this.stage);
     }
 
+    // Event when left clicking to draw
     handleDrawClick(event) {
         // set dragging to true, so if we move the mouse handleDRag will know we can still draw
         if (event.data.button != 0) {
@@ -115,8 +118,18 @@ class Editor {
                 this.grid[x][y] = this.selected;
                 if (this.entrance != null && this.entrance[0] == x && this.entrance[1] == y) {
                     this.entrance = null;
+                    this.render();
+                    return;
                 }
-            } else if (this.selected <= 1) {
+                // maybe slow for big stores
+                for (let i = 0; i < this.exits.length; i++) {
+                    if (this.exits[i][0] == x && this.exits[i][1] == y) {
+                        this.exits.splice(i, 1);
+                        this.render();
+                        return;
+                    }
+                }
+            } else if (this.selected == 1) {
                 this.grid[x][y] = this.selected;
             } else if (this.selected == 2 && this.entrance == null) {
                 this.entrance = [x, y];
@@ -127,10 +140,11 @@ class Editor {
         }
     }
 
+    // Event when moving to draw after first click. Selected object is placed wherever
+    // mouse goes
     handleDrawDrag(event) {
         // if dragging we can just place objects
         if (this.drawDrag) {
-            //this.handleDrawClick(event);
             let pos = event.data.getLocalPosition(this.objects);
             let x = Math.floor(pos.x / this.scale);
             let y = Math.floor(pos.y / this.scale);
@@ -139,6 +153,15 @@ class Editor {
                     this.grid[x][y] = this.selected;
                     if (this.entrance != null && this.entrance[0] == x && this.entrance[1] == y) {
                         this.entrance = null;
+                        this.render();
+                        return;
+                    }
+                    for (let i = 0; i < this.exits.length; i++) {
+                        if (this.exits[i][0] == x && this.exits[i][1] == y) {
+                            this.exits.splice(i, 1);
+                            this.render();
+                            return;
+                        }
                     }
                 } else if (this.selected == 1) {
                     this.grid[x][y] = this.selected;
@@ -161,6 +184,8 @@ class Editor {
             this.moveDrag = true;
     }
 
+    // When dragging after clicking right mouse button the canvas will be dragged in the direction
+    // of the mouse, allows user to pan the canvas
     handleMoveDrag(event) {
         if (this.moveDrag) {
             this.editorContents.position.x += event.data.originalEvent.movementX;
@@ -175,13 +200,13 @@ class Editor {
 
     // zooms in the given direction. True for in and false for out
     zoom(direction) {
-        // TODO scaling amount needs to be determined sometime
         let amount = direction ? 1.25 : 0.75;
         this.editorContents.scale.x *= amount;
         this.editorContents.scale.y *= amount;
         this.render();
     }
 
+    // Return object containing map data for store to use
     getMapObject() {
         console.log(this.grid)
         console.log(this.exits)
