@@ -206,6 +206,7 @@ class Simulation {
         this.currentStep = 0;
        // this.vis.setYscale(); // sets the y range of both graphs
         this.ticker = new Ticker();
+        document.getElementById("loadbtn").removeAttribute("disabled");
     }
 
     pauseSim() {
