@@ -142,6 +142,7 @@ class Visualisations {
     moveData() {
         this.linedata2 = this.lineChart1.data.datasets[0].data;
         this.linedata4 = this.lineChart1.data.datasets[1].data;
+      
         this.lineChart2.data.datasets[0].data = this.linedata2;
         this.lineChart2.data.datasets[1].data = this.linedata4;
         this.lineChart2.data.labels = this.lineChart1.data.labels;

@@ -5,8 +5,8 @@ import Visualisations from './visualisations.js';
 import VisB from './visB.js';
 import Heatmaps from './heatmap.js';
 
-
-let simapp = new PIXI.Renderer({ width: 300, height: 300, backgroundColor: 0x1099bb });
+// INIT SIMULATION
+let simapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
 simapp.render(new PIXI.Container);
 document.getElementById("sim").appendChild(simapp.view);
 var Lx = 20; 
@@ -14,13 +14,21 @@ var Ly = 20;
 var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'));
 //var visB = new VisB(document.getElementById('visB1').getContext('2d'), document.getElementById('visB2').getContext('2d'));
 var hmp = new Heatmaps(Lx, Ly);
-var sim = new Simulation(0, Lx, Ly, 10, 50, 0.1, 0.1, 20, 1000, false, 1.0, true, simapp, 15, vis, hmp);
 
-let editorapp = new PIXI.Renderer({ width: 700, height: 700, backgroundColor: 0x1099bb });
+var sim = new Simulation(0, Lx, Ly, 10, 50, 0.1, 0.1, 20, 1000, true, 1.0, simapp, 15, vis, hmp);
+
+
+// INIT EDITOR
+let editordiv = document.getElementById("editor")
+let editorapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
 let editor = new Editor(editorapp, 35);
 editor.setStoresize(20, 20);
-document.getElementById("editor").appendChild(editorapp.view);
+editordiv.appendChild(editorapp.view)
 
+// GENERAL UI
+
+// disable sim button before a map is loaded
+document.getElementById("loadbtn").setAttribute("disabled", "");
 // Editor functionality
 editorapp.view.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -62,26 +70,48 @@ document.getElementById("storesize").addEventListener("change", () => {
     editor.setStoresize(size, size);
 })
 
-
-
-// Sim UI functionality
-document.getElementById("loadbtn").addEventListener("click", startsim.bind(sim))
-document.getElementById("stopbtn").addEventListener("click", sim.stopSim.bind(sim))
+// SIM UI FUNCTIONALITY
+document.getElementById("stopbtn").addEventListener("click", () => {
+    sim.pauseSim();
+    if (sim.paused) {
+        document.getElementById("stopbtn").innerHTML = "Resume";
+    } else {
+        document.getElementById("stopbtn").innerHTML = "Stop";
+    }
+})
 document.getElementById("genbtn").addEventListener("click", () => {
     sim.genStore();
     sim.initState();
     sim.renderStore();
+    document.getElementById("loadbtn").removeAttribute("disabled");
 })
+
 
 document.getElementById("usemapbtn").addEventListener("click", () => {
     sim.loadStore(editor.getMapObject());
     sim.initState();
     sim.renderStore();
+    document.getElementById("loadbtn").removeAttribute("disabled");
 })
 
-let customer = 0;
+// resize canvas for sim and editor when page resizes
+window.addEventListener("resize", () => {
+    editorapp.resize(0.3 * document.body.clientWidth, 0.3 * document.body.clientWidth);
+    editor.scale = Math.floor((0.3 * document.body.clientWidth) / editor.grid.length);
+    editor.init();
+    editor.render();
 
-function startsim() {
+    simapp.resize(0.3 * document.body.clientWidth, 0.3 * document.body.clientWidth);
+    sim.scale = Math.floor((0.3 * document.body.clientWidth) / editor.grid.length);
+    sim.app.render(sim.stage)
+    if (sim.store != null) 
+        sim.renderStore();
+    if (sim.customers != null)
+        sim.renderCustomers();
+})
+
+let startsim = () => {
+
     let test_bool = true;
     if (!document.getElementById("n_cust").validity.valid) {
         document.getElementById("n_cust_error").innerText = 'Enter a value greater than 0';
@@ -104,7 +134,11 @@ function startsim() {
         test_bool = false;
     }
     //stop current sim first
-    //this.stopSim();
+    document.getElementById("loadbtn").setAttribute("disabled", "");
+    sim.stopSim();
+    sim.renderStore();
+    sim.initState();
+    //sim.renderStore();
 
     let n_cust = document.getElementById("n_cust").value;
     let cust_rate = document.getElementById("cust_rate").value;
@@ -112,20 +146,21 @@ function startsim() {
     let n_shelves = document.getElementById("n_shelves").value;
     let n_steps = document.getElementById("n_steps").value;
 
-    this.nCustomers = n_cust;
-    this.probNewCustomer = cust_rate;
-    this.probInfCustomer = inf_rate;
-    this.nShelves = n_shelves;
-    this.maxSteps = n_steps;
+    sim.nCustomers = n_cust;
+    sim.probNewCustomer = cust_rate;
+    sim.probInfCustomer = inf_rate;
+    sim.nShelves = n_shelves;
+    sim.maxSteps = n_steps;
     if (test_bool) {
         document.getElementById("n_cust_error").innerText = null;
         document.getElementById("cust_rate_error").innerText = null;
         document.getElementById("inf_rate_error").innerText = null;
         document.getElementById("n_shelves_error").innerText = null;
         document.getElementById("n_steps_error").innerText = null;
-        this.startSim();
+        sim.startSim();
     }
     //this.hasEnded = false;
     //this.runSimulation();
 }
 
+document.getElementById("loadbtn").addEventListener("click", startsim)

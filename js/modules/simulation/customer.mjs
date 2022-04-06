@@ -11,13 +11,18 @@ class Customer {
         this.shoppingList = [];
         this.path = null;
         this.probSpreadPlume = probSpreadPlume;
+        // how much exposure to virus
         this.exposure = 0;
+        // how long exposed to virus
         this.exposureTime = 0;
+        // How long exposed to virus after exceeding the threshold for amount of
+        // virus particles one should be exposed to
         this.exposureTimeThres = 0;
         this.timeInStore = 0;
         this.initItemsList = null;
         this.cashierWaitingTime = null;
         this.waitingTime = 0;
+        // Whether heading for exit
         this.headingForExit = 0;
         this.newInfection = false;
     }
@@ -64,7 +69,7 @@ class Customer {
     }
 
     spreadViralPlumes(store) {
-        let sample = Math.random();
+        let sample = store.randomGen();
         if (sample < this.probSpreadPlume && !store.useDiffusion) {
             store.plumes[this.x][this.y] = params.PLUMELIFETIME;
         } else if (store.useDiffusion) {
@@ -78,18 +83,18 @@ class Customer {
     }
 
     initShoppingList(store, maxN) {
-        let targetsDrawn = randRange(0, maxN) + 1;
+        let targetsDrawn = randRange(0, maxN, store.randomGen) + 1;
         while (this.shoppingList.length < targetsDrawn) {
-            let tx = randRange(0, store.Lx);
+            let tx = randRange(0, store.Lx, store.randomGen);
             // from 1 so customers don't run into other customers visiting cashiers
-            let ty = randRange(1, store.Ly);
+            let ty = randRange(1, store.Ly, store.randomGen);
             while (store.blocked[tx][ty] == 1 || checkCoordIn2DArray(tx, ty, this.shoppingList) || checkCoordIn2DArray(tx, ty, store.exit)
             || (store.entrance[0] == tx && store.entrance[1] == ty) || (tx < 1 || ty < 1) || (tx < 3 && ty < 3) ||
             !(store.blockedShelves[tx][ty - 1] == 1 || (ty + 1 < store.Ly && store.blockedShelves[tx][ty + 1] == 1) ||
             (tx - 1 >= 0 || store.blockedShelves[tx - 1][ty] == 1) || (tx + 1 < store.Lx && (store.blockedShelves[tx + 1][ty] == 1 && store.blockedShelves[tx + 1][ty] != undefined)))) {
                 store.blocked[tx][ty] == 1
-                tx = randRange(0, store.Lx);
-                ty = randRange(1, store.Ly);
+                tx = randRange(0, store.Lx, store.randomGen);
+                ty = randRange(1, store.Ly, store.randomGen);
             }
             this.addTarget([tx, ty]);
         }
@@ -104,7 +109,7 @@ class Customer {
     }
 
     takeRandomStep(store) {
-        let permDir = permuteArray(DIRECTIONS);
+        let permDir = permuteArray(DIRECTIONS, store.randomGen);
         for (let i = 0; i < permDir.length; i++) {
             let step = permDir[i];
             let tmpPos = [parseInt(this.x) + parseInt(step[0]), parseInt(this.y) + parseInt(step[1])];
@@ -139,6 +144,8 @@ class SmartCustomer extends Customer {
     }
 
     takeStep(store) {
+        this.timeInStore++;
+
         if (store.plumes[this.x][this.y] > 0 && !store.useDiffusion) {
             this.exposure += 1;
         } else if (store.plumes[this.x][this.y] > 0 && store.useDiffusion) {
@@ -149,6 +156,7 @@ class SmartCustomer extends Customer {
                 this.exposureTime += 1;
                 if (store.plumes[this.x][this.y] > params.EXPOSURELIMIT) 
                     this.exposureTimeThres += 1;
+                    this.infected = 1;
             }
         }
         var threshold = 1;
@@ -169,15 +177,13 @@ class SmartCustomer extends Customer {
         // heading for exit
         if (this.shoppingList.length == 0) {
             if (!this.atExit(store)) {
-                //console.log("not at exit", this.waitingTime)
+
                 this.shoppingList.push(store.getExit());
                 this.headingForExit = 1;
             } else if (this.atExit(store) && this.cashierWaitingTime > 0) {
-               // console.log("now just waiting")
                 this.cashierWaitingTime -= 1;
                 return [this.x, this.y]; 
             } else {
-                //console.log("yes can exit")
                 store.blocked[this.x][this.y] = 0;
                 return [-1, -1];
             }
@@ -185,7 +191,7 @@ class SmartCustomer extends Customer {
 
         if (this.itemFound()) {
             let itemPos = this.shoppingList.shift();
-            this.waitingTime = randRange(params.MINWAITINGTIME, params.MAXWAITINGTIME);
+            this.waitingTime = randRange(params.MINWAITINGTIME, params.MAXWAITINGTIME, store.randomGen);
             return itemPos;
         }
 
@@ -222,7 +228,7 @@ class SmartCustomer extends Customer {
             // sanity check for sims with small environments
             store.createStaticGraph();
             this.path = null;
-        } else if ((this.headingForExit == 0 && Math.random() < params.BLOCKRANDOMSTEP) || Math.random() < params.BLOCKRANDOMSTEP * 1e-2) {
+        } else if ((this.headingForExit == 0 && store.randomGen() < params.BLOCKRANDOMSTEP) || store.randomGen() < params.BLOCKRANDOMSTEP * 1e-2) {
             this.takeRandomStep(store);
             this.path = null;
         }
