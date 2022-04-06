@@ -49,7 +49,6 @@ class Editor {
         for (let i = 0; i < this.grid.length; i++) {
             this.grid[i] = new Array(y).fill(0);
         }
-        console.log(this.grid.length)
         this.objects.clear();
         this.background.clear();
         this.init();

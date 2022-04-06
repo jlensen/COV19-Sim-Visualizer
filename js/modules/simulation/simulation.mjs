@@ -5,8 +5,11 @@ import { UPDATE_PRIORITY, Ticker, Container, Graphics } from '../pixi/pixi.mjs';
 
 class Simulation {
 
-    constructor(seed = 1, Lx, Ly, nShelves, nCustomers = 1, probNewCustomer = 0.1, probInfCustomer = 0.05,
-        nPlumes = 20, maxSteps = 1000, useDiffusion = false, dx = 1.0, app, scale, vis) {
+    constructor(seed = 1, Lx, Ly, nShelves, nCustomers = 2, probNewCustomer = 0.1, probInfCustomer = 0.05,
+        nPlumes = 20, maxSteps = 1000, useDiffusion = true, dx = 1.0, app, scale, vis, hmp) {
+
+        // Apparently javascript random does not accept a seed
+        // So for this we need to find something or implement it ourselves
 
         // GRAPHICS
         this.app = app;
@@ -21,6 +24,7 @@ class Simulation {
 
         // VISUALISATIONS
         this.vis = vis;
+        this.hmp = hmp;
 
         // PARAMETERS
         this.seed = seed;
@@ -175,8 +179,8 @@ class Simulation {
                 this.simStep();
                 this.renderCustomers();
             } else {
-                this.ticker.destroy();
-                this.ticker = new Ticker();
+                this.stopSim();
+               // this.ticker.destroy(); this is double up with stopping sim
             }
         }
 
@@ -185,6 +189,7 @@ class Simulation {
 
         // vis code
         this.vis.moveData();
+        this.hmp.moveData();
     }
 
     stopSim() {
@@ -255,8 +260,9 @@ class Simulation {
             this.timeSpent[this.customerNow] = tx;
             this.customerInfected[this.customerNow] = ty;
             this.customerNow += 1;
-            console.log(this.stepStr);
 
+            // Useful for debug
+            //console.log(this.stepStr);
         }
 
         if (this.updatePlumes && !this.useDiffusion) {
@@ -271,9 +277,15 @@ class Simulation {
             if (this.nCustomers && this.randomGen() < this.probNewCustomer)
                 this.newCustomer();
         }
-        // visualisation code
+
+        // visualisation updates
         if (this.currentStep % 10 === 0)
             this.vis.frameUpdate(this.infectedCount, this.currentStep);
+        // heatmap updates
+        if (this.currentStep % 10 === 0) {
+            this.hmp.frameUpdate(this.store.plumes, this.currentStep);
+        }
+
 
         if (this.nCustomers == 0 && this.customers.length == 0) {
             // end condition, do whatever we want?
@@ -286,9 +298,11 @@ class Simulation {
     getStats() {
         return {
             infections: this.infectedCount,
-            step: this.currentStep,
-            custCount: this.customers.length,
-            totExposure: this.exposureDuringTimeStep[this.currentStep]
+            plumes: this.store.plumes,
+            size: this.scale,
+            step : this.currentStep,
+            custCount : this.customers.length,
+            totExposure : this.exposureDuringTimeStep[this.currentStep]
         }
     }
 }

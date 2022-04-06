@@ -2,13 +2,18 @@ import Simulation from './modules/simulation/simulation.mjs'
 import Editor from './modules/simulation/editor.mjs';
 import * as PIXI from './modules/pixi/pixi.mjs'
 import Visualisations from './visualisations.js'
+import Heatmaps from './heatmap.js'
 
 // INIT SIMULATION
 let simapp = new PIXI.Renderer({ width: 0.3 * document.body.clientWidth, height: 0.3 * document.body.clientWidth, backgroundColor: 0x1099bb });
 simapp.render(new PIXI.Container);
-var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'), sim);
-var sim = new Simulation(0, 20, 20, 10, 50, 0.1, 0.1, 20, 1000, true, 1.0, simapp, 15, vis);
 document.getElementById("sim").appendChild(simapp.view);
+var Lx = 20; 
+var Ly = 20;
+var vis = new Visualisations(document.getElementById('vis').getContext('2d'), document.getElementById('vis2').getContext('2d'), sim);
+var hmp = new Heatmaps(Lx, Ly);
+var sim = new Simulation(0, Lx, Ly, 10, 50, 0.1, 0.1, 20, 1000, true, 1.0, simapp, 15, vis, hmp);
+
 
 // INIT EDITOR
 let editordiv = document.getElementById("editor")
@@ -38,6 +43,12 @@ document.getElementById("erase").addEventListener("click", () => {
     // TODO add support for selecting different objects to draw
     editor.selected = 0;
 })
+
+
+//btn.addEventListener("click", startsim.bind(sim));
+//document.getElementById("stopbtn").addEventListener("click", sim.stopSim.bind(sim));
+//btn.addEventListener("click", ticker.start.bind(this))
+document.getElementById("resetZoom").addEventListener("click", vis.resetZoom.bind(vis));
 
 document.getElementById("draw").addEventListener("click", () => {
     editor.selected = document.getElementById("objectSelect").value;
@@ -97,7 +108,28 @@ window.addEventListener("resize", () => {
 })
 
 let startsim = () => {
-    console.log("start")
+
+    let test_bool = true;
+    if (!document.getElementById("n_cust").validity.valid) {
+        document.getElementById("n_cust_error").innerText = 'Enter a value greater than 0';
+        test_bool = false;
+    }
+    if (!document.getElementById("cust_rate").validity.valid) {
+        document.getElementById("cust_rate_error").innerText = 'Enter a value between 0 and 1 with at most 2 decimals';
+        test_bool = false;
+    }
+    if (!document.getElementById("inf_rate").validity.valid) {
+        document.getElementById("inf_rate_error").innerText = 'Enter a value between 0 and 1 with at most 2 decimals';
+        test_bool = false;
+    }
+    if (!document.getElementById("n_shelves").validity.valid) {
+        document.getElementById("n_shelves_error").innerText = 'Enter a value greater than 0';
+        test_bool = false;
+    }
+    if (!document.getElementById("n_steps").validity.valid) {
+        document.getElementById("n_steps_error").innerText = 'Enter a value greater than 0';
+        test_bool = false;
+    }
     //stop current sim first
     document.getElementById("loadbtn").setAttribute("disabled", "");
     sim.stopSim();
@@ -116,7 +148,14 @@ let startsim = () => {
     sim.probInfCustomer = inf_rate;
     sim.nShelves = n_shelves;
     sim.maxSteps = n_steps;
-    sim.startSim();
+    if (test_bool) {
+        document.getElementById("n_cust_error").innerText = null;
+        document.getElementById("cust_rate_error").innerText = null;
+        document.getElementById("inf_rate_error").innerText = null;
+        document.getElementById("n_shelves_error").innerText = null;
+        document.getElementById("n_steps_error").innerText = null;
+        sim.startSim();
+    }
     //this.hasEnded = false;
     //this.runSimulation();
 }
