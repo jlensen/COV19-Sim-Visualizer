@@ -155,6 +155,7 @@ class SmartCustomer extends Customer {
                 this.exposureTime += 1;
                 if (store.plumes[this.x][this.y] > params.EXPOSURELIMIT) 
                     this.exposureTimeThres += 1;
+                    this.infected = 1;
             }
         }
 
