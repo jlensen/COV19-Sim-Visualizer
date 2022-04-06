@@ -8,9 +8,9 @@ class Visualisations {
         this.linedata4 = [];
         
         this.lineLabels = [];
-        // bad implementations
-        // const ctx2 = document.getElementById('vis2').getContext('2d');
-        // const ctx = document.getElementById('vis').getContext('2d');
+        
+        //this.maxLineItem = 0;
+
         this.lineChart1 = new Chart(ctx, {
             type: 'line',
             data: {
@@ -128,9 +128,11 @@ class Visualisations {
     }
 
     frameUpdate(infCount, newInfections,curStep) {
+        //this fixes the issue where the graph continues at previous labels
         if ( curStep < this.lineChart1.data.labels[-1]) {
             this.lineChart1.update();
-        }
+        } 
+        //this.maxLineItem = Math.max(this.maxLineItem, infCount, newInfections);
         this.lineChart1.data.datasets[0].data.push(infCount);
         this.lineChart1.data.datasets[1].data.push(newInfections);
         this.lineChart1.data.labels.push(curStep);
@@ -145,11 +147,16 @@ class Visualisations {
         this.lineChart2.data.labels = this.lineChart1.data.labels;
         this.lineChart2.update();
 
-       // this.lineLabels = []; //clear labels for next sim
         this.lineChart1.data.datasets[0].data = [];
         this.lineChart1.data.datasets[1].data = [];
         this.lineChart1.data.labels = [];
-        console.log(this.lineChart1.data.labels);
+    }
+    setYscale() {
+        var maxLineItem = Math.max(this.lineChart1.options.scales.y.max, 
+            this.lineChart2.options.scales.y.max);
+        this.lineChart1.options.scales.y.max = maxLineItem;
+        this.lineChart2.options.scales.y.max = maxLineItem;
+
     }
 }
 export default Visualisations;

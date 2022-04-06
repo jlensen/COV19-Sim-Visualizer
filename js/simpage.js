@@ -104,7 +104,7 @@ function startsim() {
         test_bool = false;
     }
     //stop current sim first
-    this.stopSim();
+    //this.stopSim();
 
     let n_cust = document.getElementById("n_cust").value;
     let cust_rate = document.getElementById("cust_rate").value;

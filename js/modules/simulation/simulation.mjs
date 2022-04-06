@@ -180,6 +180,7 @@ class Simulation {
             this.ticker.destroy();
         }
         this.currentStep = 0;
+       // this.vis.setYscale(); // sets the y range of both graphs
         this.ticker = new Ticker();
     }
 
@@ -268,6 +269,7 @@ class Simulation {
             // end condition, do whatever we want?
             // stop sim and update vis
             this.stopSim();
+            //console.log('endcondition');
             return;
         }
     }
