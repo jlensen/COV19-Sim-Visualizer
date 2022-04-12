@@ -83,7 +83,7 @@ document.getElementById("stopbtn").addEventListener("click", () => {
 document.getElementById("genbtn").addEventListener("click", () => {
     sim.genStore();
     sim.initState();
-    sim.scale = Math.floor((0.3 * document.body.clientWidth) / sim.store.grid.Lx);
+    sim.scale = Math.floor((0.3 * document.body.clientWidth) / sim.store.Lx);
     sim.renderStore();
     document.getElementById("loadbtn").removeAttribute("disabled");
 })
