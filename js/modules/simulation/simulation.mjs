@@ -58,16 +58,16 @@ class Simulation {
 
         this.paused = false;
 
-        if (this.nCustomers == 1) {
-            this.probInfCustomer = -1;
+        /*if (this.nCustomers == 1) {
+            this.probInfCustomer = 1;
             this.updatePlumes = false;
 
             // TODO: Look at what this is and if we need it?
             this.store.initStaticPlumeField(this.nPlumes);
         }
-        else {
+        else {*/
             this.updatePlumes = true;
-        }
+        //}
 
         if (this.useDiffusion) {
             this.store.useDiffusion = true;
