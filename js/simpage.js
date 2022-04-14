@@ -107,7 +107,9 @@ window.addEventListener("resize", () => {
     editor.render();
 
     simapp.resize(0.3 * document.body.clientWidth, 0.3 * document.body.clientWidth);
-    sim.scale = Math.floor((0.3 * document.body.clientWidth) / sim.store.Lx);
+    if (sim.store != undefined) {
+        sim.scale = Math.floor((0.3 * document.body.clientWidth) / sim.store.Lx);
+    }
     sim.app.render(sim.stage)
     if (sim.store != null) 
         sim.renderStore();
