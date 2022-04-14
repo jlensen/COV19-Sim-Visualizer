@@ -81,6 +81,7 @@ document.getElementById("stopbtn").addEventListener("click", () => {
     }
 })
 document.getElementById("genbtn").addEventListener("click", () => {
+    sim.seed = document.getElementById("seed").value;
     sim.genStore();
     sim.initState();
     sim.scale = Math.floor((0.3 * document.body.clientWidth) / sim.store.Lx);

@@ -134,7 +134,6 @@ class Simulation {
         this.store = new Store(1.0, this.randomGen);
         this.store.genMap(this.Lx, this.Ly, this.nShelves);
         //this.store.initializeShelvesRegular(this.nShelves);
-        this.scale = this.app.width / this.Lx;
         this.store.createStaticGraph();
         this.store.initializeDoors();
     }

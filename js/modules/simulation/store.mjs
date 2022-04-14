@@ -113,10 +113,10 @@ class Store {
 
     addPlume(plumeDuration) {
         let plumePosx = randRange(1, this.Lx - 1, this.randomGen);
-        let plumePosy = randRange(1, thi.Ly - 1, this.randomGen);
+        let plumePosy = randRange(1, this.Ly - 1, this.randomGen);
         while (this.blocked[plumePosx][plumePosy] == 1 || this.plumes[plumePosx][plumePosy] > 0) {
             plumePosx = randRange(1, this.Lx - 1, this.randomGen);
-            plumePosy = randRange(1, thi.Ly - 1, this.randomGen);
+            plumePosy = randRange(1, this.Ly - 1, this.randomGen);
         }
         this.plumes[plumePosx][plumePosy] = plumeDuration;
         return [plumePosx, plumePosy];
