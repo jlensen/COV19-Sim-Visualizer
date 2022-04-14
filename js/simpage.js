@@ -142,7 +142,6 @@ let startsim = () => {
     sim.stopSim();
     document.getElementById("loadbtn").setAttribute("disabled", "");
     sim.renderStore();
-    sim.initState();
     //sim.renderStore();
 
     let n_cust = document.getElementById("n_cust").value;
@@ -153,12 +152,14 @@ let startsim = () => {
     let masks = document.getElementById("mask").checked;
     let cont_const = document.getElementById("cont_const").value;
     let cont_inc = document.getElementById("cont_inc").value;
+    let seed = document.getElementById("seed").value;
 
     sim.nCustomers = n_cust;
     sim.probNewCustomer = cust_rate;
     sim.probInfCustomer = inf_rate;
     sim.nShelves = n_shelves;
     sim.maxSteps = n_steps;
+    sim.seed = seed;
     if (masks) {
         params.PLUMECONCCONT = parseFloat(cont_const);
         params.PLUMECONCINC = parseFloat(cont_inc);
@@ -172,6 +173,7 @@ let startsim = () => {
         document.getElementById("inf_rate_error").innerText = null;
         document.getElementById("n_shelves_error").innerText = null;
         document.getElementById("n_steps_error").innerText = null;
+        sim.initState();
         sim.startSim();
     }
     //this.hasEnded = false;

@@ -54,6 +54,7 @@ class Simulation {
         this.currentStep = 0;
         this.infectedCount = 0;
         this.customers = [];
+        this.randomGen = new alea(this.seed);
 
         this.paused = false;
 
